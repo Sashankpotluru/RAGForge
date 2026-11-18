@@ -10,8 +10,17 @@ The evaluation contract supersedes the design's earlier naming. Recall and hit r
 
 Source and index identifiers, ranked evidence and citation references are inspectable.
 The GitHub Pages workbench uses the full BEIR SciFact corpus and shares its ranking
-implementation and pinned ONNX model artifacts with the 300-query retrieval benchmark.
+implementation and pinned ONNX model artifacts with the SciFact and ArguAna
+retrieval benchmarks. Their separate results show how the same methods behave
+on scientific evidence retrieval and counterargument retrieval. Long query and
+passage pairs use explicit longest-first truncation so one input cannot consume
+the reranker's entire token budget.
+
 The Python service retains its separate ingestion, persistence and fixture checks.
-Load testing, generated-answer faithfulness and cross-domain evaluation remain
+Its HTTP load profile uses a trained tiny embedding model, one API worker and
+an isolated native Qdrant server. Concurrent clients can queue behind the runtime
+lock; the measurements describe this configuration rather than a multi-worker
+deployment. Generated-answer faithfulness and multi-user authorization remain
 future work. Local installation and passing tests do not establish independent
-dependency-risk approval. See the [SciFact evaluation](scifact-evaluation.md).
+dependency-risk approval. See the [SciFact evaluation](scifact-evaluation.md),
+[ArguAna evaluation](arguana-evaluation.md) and [API load test](load-testing.md).

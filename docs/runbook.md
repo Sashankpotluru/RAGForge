@@ -29,6 +29,11 @@ uv run --no-sync ragforge evaluate --output results/tiny.json
 
 Initial model provisioning downloads weights from Hugging Face. Once cached, use `HF_HUB_OFFLINE=1`. The default hybrid mode fuses dense and BM25 with reciprocal-rank fusion (k=60). Specify `hybrid_rerank` to score fused candidates with the cross-encoder. Configuration errors surface when an unavailable stage is requested.
 
+`RAGFORGE_EMBEDDING_DEVICE=cpu` selects CPU execution for the SentenceTransformer
+adapter, as used in the [API load test](load-testing.md). When unset, the model
+library selects its device as before. This setting does not select a model or
+enable generation.
+
 For chat completions, set `RAGFORGE_PROVIDER_BASE_URL` (including any /v1 prefix) and `RAGFORGE_PROVIDER_MODEL`. Supply `RAGFORGE_PROVIDER_TOKEN` if required. The configured endpoint receives questions and cited text for answers, or query text for rewriting. It must return JSON content with text and citation_ids for answers, or query for rewriting. Enable rewriting per request with `rewrite_query=true`. Retrieval alone needs no provider.
 
 ## Recovery and checks

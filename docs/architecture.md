@@ -6,7 +6,7 @@ in the same GitHub repository. The website does not depend on the Python service
 
 ## Deployment diagram
 
-![SciFact preparation and evaluation feed the GitHub Pages workbench; the Python backend runs separately](architecture-scifact.png)
+![SciFact browser search, two retrieval benchmarks and isolated HTTP capacity measurement](architecture-evaluation.png)
 
 GitHub Actions tests the code, builds an allowlisted static artifact, and deploys
 that artifact to GitHub Pages. The browser loads the workbench and all 5,183
@@ -14,10 +14,19 @@ SciFact abstracts. Keyword search uses the loaded corpus; neural retrieval and
 answer generation download their models only when requested.
 
 Preparation computes a pinned MiniLM document index once. A separate offline
-runner scores the shared retrieval code on all 300 official test queries and
-publishes rankings, metrics, confidence intervals and provenance. Test judgments
-are not deployed to the browser. The original six-policy fixture remains with
-the separate Python sample app.
+runner scores the shared retrieval code on all 300 SciFact test queries and all
+1,406 ArguAna counterargument queries. It publishes rankings, metrics, confidence
+intervals and provenance. Test judgments are not deployed to the browser.
+ArguAna is a recorded offline benchmark; SciFact remains the interactive search
+corpus. The original six-policy fixture remains with the Python sample app.
+
+The backend has its own load harness. It starts isolated loopback services,
+ingests a fixed 1,000-document SciFact subset and drives actual HTTP search
+requests with 1, 4, 8 and 16 concurrent clients. That path measures the Python
+service, SQLite, native Qdrant and trained embeddings together. It is separate
+from browser searches and the Node retrieval-quality evaluation. Only aggregate
+load results are published to the website; temporary service state and logs are
+not part of the static build.
 
 ## Current public hosting
 
@@ -27,8 +36,11 @@ flowchart LR
     prep --> repo["GitHub repository<br/>source + corpus + vectors"]
     data --> eval["Shared retrieval benchmark<br/>BM25 / dense / hybrid / reranked"]
     prep --> eval
-    labels["300 test queries + qrels"] --> eval
+    labels["SciFact: 300 test queries + qrels"] --> eval
+    arguana["ArguAna: 8,674 arguments<br/>1,406 test queries + qrels"] --> eval
     eval --> results["Versioned metrics + intervals"]
+    load["Isolated Python API load test<br/>1,000 documents · 32 train queries"] --> capacity["HTTP throughput, latency + errors"]
+    capacity --> ci
     repo --> ci["GitHub Actions<br/>test + static build"]
     results --> ci
     ci --> pages["GitHub Pages<br/>interface, corpus, vectors + summary"]
@@ -47,9 +59,11 @@ before neural search. Precomputed vectors avoid embedding thousands of abstracts
 on each visit; the browser embeds only the query.
 
 The browser and Python implementations have separate model configurations. The
-SciFact benchmark uses the browser ranking implementation with Node CPU inference.
+retrieval benchmarks use the browser ranking implementation with Node CPU inference.
 Live browser inference uses WebAssembly; timings depend on the device. Historical
-Python fixture measurements remain separately labeled. [Evaluation](scifact-evaluation.md)
+Python fixture measurements remain separately labeled.
+[SciFact](scifact-evaluation.md) · [ArguAna](arguana-evaluation.md) ·
+[API load test](load-testing.md)
 
 <details>
 <summary>Python backend components</summary>
@@ -98,7 +112,7 @@ the reranked configuration also reranks the fused candidates.
 
 </details>
 
-The [PNG](architecture-scifact.png) is the presentation diagram used in the README and
+The [PNG](architecture-evaluation.png) is the presentation diagram used in the README and
 website. The Mermaid references provide editable descriptions of the deployment
 and backend paths.
 

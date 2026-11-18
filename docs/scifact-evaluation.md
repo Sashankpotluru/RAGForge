@@ -1,5 +1,11 @@
 # SciFact retrieval evaluation
 
+This page describes **scifact-v2**, measured after correcting cross-encoder pair
+truncation. The original [scifact-v1 report](../evaluations/results/scifact-v1.json)
+and its [metric audit](../evaluations/results/scifact-v1-metric-audit.json) remain
+unchanged for comparison. The new [ArguAna benchmark](arguana-evaluation.md) uses
+the same corrected ranking implementation and model settings.
+
 RAGForge searches all **5,183 scientific abstracts** in BEIR SciFact. This report
 uses all **300 official BEIR test queries** and their **339 positive relevance
 judgments**. The collection and query split come from the published benchmark;
@@ -16,22 +22,22 @@ loading, document preparation and the training-query warmup.
 
 | Method | HitRate@1 | MRR@10 | nDCG@10 | Recall@10 | Recall@100 | Median / p95 ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| BM25 | 0.5433 | 0.6316 | 0.6629 | 0.7833 | 0.8826 | 1.05 / 2.15 |
-| Dense MiniLM | 0.5033 | 0.6056 | 0.6465 | 0.7867 | 0.9250 | 6.13 / 7.42 |
-| Hybrid (RRF) | 0.5400 | 0.6448 | 0.6802 | 0.8096 | 0.9550 | 6.83 / 8.70 |
-| Hybrid + reranking | 0.5633 | 0.6492 | 0.6807 | 0.8062 | 0.9550 | 447.84 / 461.83 |
+| BM25 | 0.5433 | 0.6316 | 0.6629 | 0.7833 | 0.8826 | 0.95 / 2.16 |
+| Dense MiniLM | 0.5033 | 0.6056 | 0.6465 | 0.7867 | 0.9250 | 6.46 / 8.55 |
+| Hybrid (RRF) | 0.5400 | 0.6448 | 0.6802 | 0.8096 | 0.9550 | 6.68 / 9.47 |
+| Hybrid + reranking | 0.5600 | 0.6484 | 0.6809 | 0.8096 | 0.9550 | 466.54 / 513.94 |
 
 | Method | nDCG@10 95% interval | Paired change from BM25 | 95% interval for change |
 | --- | --- | ---: | --- |
 | BM25 | 0.6179–0.7106 | — | — |
 | Dense MiniLM | 0.6018–0.6934 | −0.0164 | −0.0543 to +0.0212 |
 | Hybrid (RRF) | 0.6389–0.7242 | +0.0173 | −0.0055 to +0.0398 |
-| Hybrid + reranking | 0.6368–0.7258 | +0.0177 | −0.0180 to +0.0525 |
+| Hybrid + reranking | 0.6377–0.7258 | +0.0180 | −0.0161 to +0.0518 |
 
 Hybrid improved observed Recall@100 by **7.24 percentage points** over BM25.
 The top-10 ranking differences are less conclusive: every paired nDCG interval
-above includes zero. Reranking increased nDCG@10 by only 0.0004 over hybrid while
-increasing median latency about 66-fold. It also slightly reduced Recall@10.
+above includes zero. Reranking increased nDCG@10 by only 0.0007 over hybrid while
+increasing median latency about 70-fold. Recall@10 was unchanged.
 BM25 remains a strong, inexpensive baseline for this collection.
 
 The reranked method retains hybrid's candidate set, so their identical Recall@100
@@ -57,7 +63,7 @@ IDs and 300 test-query IDs do not overlap.
 | Dense input | First 256 tokenizer positions including special tokens; batch 8 |
 | Fusion | First 100 BM25 and dense candidates; reciprocal rank fusion with k=60; keep first 100 |
 | Reranker | `Xenova/ms-marco-MiniLM-L-6-v2`, q8; revision `a09144355adeed5f58c8ed011d209bf8ee5a1fec` |
-| Reranker input | First 256 positions of each query/document pair; batch 8 |
+| Reranker input | 256 positions; reserve CLS and two SEP tokens, longest-first right truncation of query/document content, tie trims document; batch 8 |
 | Reranking | Score first 50 fused candidates; preserve the remaining 50 in fused order |
 | Ties | Ascending official corpus row |
 | Evaluation order | Numeric test-query ID; BM25, dense, hybrid, reranked sequentially |
@@ -67,6 +73,14 @@ IDs and 300 test-query IDs do not overlap.
 Test qrels go only to the scorer. The Pages artifact contains neither test
 judgments nor saved test rankings. It searches the corpus when a visitor submits
 a query. The separate full report publishes judgments and rankings for audit.
+
+The v2 pair encoder fixes an input defect discovered while adding ArguAna:
+the prior tokenizer could truncate all document tokens for long queries. The
+corrected encoder preserves both nonempty segments, their separator tokens,
+token-type IDs and attention masks. Short pairs that fit are checked against
+the native tokenizer. This is a correctness change, selected from token-level
+inspection rather than retrieval-score tuning. The diagnostic and its scope
+are described in the [ArguAna report](arguana-evaluation.md).
 
 ## Metrics and independent check
 
@@ -91,7 +105,7 @@ The audit uses tuple order as the ranking, because cross-encoder logits and the
 unreranked RRF tail have different score scales. MRR is evaluated on only the
 first ten results. This check validates metric values, not model inference or
 bootstrap coverage. [Audit script](../benchmarks/verify_metrics.py) ·
-[Audit record](../evaluations/results/scifact-v1-metric-audit.json)
+[Audit record](../evaluations/results/scifact-v2-metric-audit.json)
 
 ## Failure cases
 
@@ -116,8 +130,8 @@ root:
 
 ```sh
 npm ci --prefix benchmarks
-npm run prepare --prefix benchmarks
-npm run evaluate --prefix benchmarks
+npm run prepare:data --prefix benchmarks -- scifact
+npm run evaluate --prefix benchmarks -- scifact
 node --test web/test/*.test.mjs
 node web/build.mjs
 ```
@@ -135,11 +149,11 @@ To independently audit the resulting metrics without rerunning models:
 ```sh
 python3 -m venv /tmp/ragforge-metric-audit
 /tmp/ragforge-metric-audit/bin/pip install pytrec-eval-terrier==0.5.11
-/tmp/ragforge-metric-audit/bin/python benchmarks/verify_metrics.py
+/tmp/ragforge-metric-audit/bin/python benchmarks/verify_metrics.py --report evaluations/results/scifact-v2.json --qrels data/scifact/qrels/test.tsv
 ```
 
 In the recorded run, document embedding took about 54 seconds, loading and
-warmup 0.59 seconds, and the 1,200 measured searches plus scoring took about 140
+warmup 0.65 seconds, and the 1,200 measured searches plus scoring took about 126
 seconds. Downloads are additional. The two q8 retrieval models total about 46 MB;
 the prepared float32 vector file is **7,961,088 bytes**. Two independent preparation
 runs produced identical vector bytes. Browser inference uses WebAssembly, so its
@@ -147,16 +161,16 @@ elapsed times need not match the Node CPU table.
 
 ## Artifacts and provenance
 
-- [Full report](../evaluations/results/scifact-v1.json): every query, judgment,
+- [Full report](../evaluations/results/scifact-v2.json): every query, judgment,
   ranked document/score tuple, metric, latency and environment detail.
-- [Browser summary](../benchmarks/data/scifact-v1/summary.json): aggregate
+- [Browser summary](../benchmarks/data/scifact-v2/summary.json): aggregate
   metrics, intervals, hardware and the full report's SHA-256.
 - [Index manifest](../benchmarks/data/scifact-v1/index.json): corpus, row-order,
   vector and source-archive hashes.
 - [Protocol source](../web/protocol.mjs) and [evaluation runner](../benchmarks/evaluate.mjs).
 
-The measured code was clean commit
-`ea78b2afc757d3013da3de26a9dcfe97469ac306`. Per-file source and model-weight hashes
+The measured code was committed with no changes to the measured files at
+`01963d71a6c5454b1ecce26ac16766553f0de257`. Per-file source and model-weight hashes
 are recorded in the report. Later documentation and interface changes do not
 change the measured ranking implementation.
 
@@ -165,7 +179,7 @@ Archive SHA-256:
 Vector SHA-256:
 `1dfaf5677ca4b843a52d5dcf8b54c4da7d0ffc1bad9b50ce40096e1752a94e17`.
 Full report SHA-256:
-`5b5269f50394fad021b1e1d21cc5b6a55cf004570eb8fe5597246796852487fb`.
+`a815317ef58a64a0c8104f10cc0c95f7e799b872232e0812b1111710e55d9332`.
 
 ## Scope and limits
 

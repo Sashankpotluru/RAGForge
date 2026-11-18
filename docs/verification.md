@@ -3,6 +3,48 @@
 Verified on 2026-11-18 on macOS ARM64 with Python 3.13.2. This record separates
 local checks, model measurements, and hosted build verification.
 
+## Two-dataset evaluation and API capacity extension
+
+SciFact-v2 and ArguAna-v1 were measured sequentially from committed retrieval
+code `01963d7`. All 300 SciFact and 1,406 ArguAna queries completed in four modes,
+for 6,824 successful searches. The independent `pytrec-eval-terrier` 0.5.11
+checks matched all **34,120 per-query metric values** exactly. The earlier
+SciFact-v1 artifacts remain unchanged.
+
+The ArguAna checks confirm that no returned ranking contains the query's own
+document ID. All five queries with absent relevant documents remain in the
+results and score zero. An input-only audit identified 519 queries whose
+candidate text was lost by the inherited pair truncation. The corrected pair
+packing retained candidate content for every audited query; short batched inputs
+match the original tokenizer's IDs, masks and segment IDs exactly.
+
+The retrieval release passed **17 Node tests**, **12 Python contract tests** and
+the static Pages build. Negative build tests reject changed source checksums,
+index dimensions, model revisions, summaries and metric audits. Browser
+checks exercised dataset switching, linked report paths, the new diagram and
+actual WebAssembly hybrid reranking, which returned ten cited passages.
+
+The Python API capacity run used measured commit `6279dc8`, fresh loopback
+services and trained CPU embeddings. It ingested 1,000 documents into 2,497
+active chunks and matching remote Qdrant points. All 2,967 measured requests
+succeeded across twelve trials. A separate calculation from the raw records
+confirmed request totals, unique request IDs, timestamp/latency consistency,
+the issuance cutoff, drain-aware throughput and every pooled percentile. Both
+child services exited and temporary index storage was removed afterward.
+
+Final local checks passed **75 Python tests** with two opt-in integration skips,
+**18 Node tests**, Ruff lint/format, mypy and the Pages build. The build independently
+recalculates the load summaries from raw observations and rejects altered counts,
+durations, failures, percentiles, model revision, document order or aggregate keys.
+The current static artifact contains only the compact load summary. Desktop and
+390px browser checks confirmed that dataset switching leaves the capacity panel
+intact and that wide tables scroll within their panels without widening the page.
+The existing non-failing PyMuPDF mypy override note remains.
+
+[SciFact methods and results](scifact-evaluation.md) ·
+[ArguAna methods and results](arguana-evaluation.md) ·
+[API load protocol](load-testing.md)
+
 ## SciFact benchmark release
 
 The public workbench now uses 5,183 abstracts rather than the six-policy fixture.
@@ -202,8 +244,10 @@ Not verified or delivered in this release:
 
 - Docker/Compose execution on this Mac (covered instead by the hosted Linux run).
 - Hosted LLM compatibility or answer entailment using a real provider.
-- Production load, multi-worker consistency, tenant authorization, or retrieval
-  improvement across multiple independent real-world collections.
+- Open-loop or long-running production load, multi-worker consistency and
+  tenant authorization. The new load profile is warm, closed-loop search on one host.
+- Universal retrieval improvement or generated-answer accuracy. The two retrieval
+  datasets show different trade-offs, including a reranking regression on ArguAna.
 - Managed Python backend hosting or the other nine portfolio projects.
 
 The [security boundaries](security.md) and [implementation decisions](implementation-notes.md)

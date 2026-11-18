@@ -7,9 +7,10 @@ their sources. It combines vector search with BM25, merges their rankings, and
 can rerank the results before passing evidence to a language model.
 
 This repository contains a Python backend and a browser workbench. The public
-workbench searches all **5,183 scientific abstracts in BEIR SciFact**. A reproducible
-benchmark compares four retrieval methods on **300 labeled test queries** using
-the same ranking code and model artifacts as the browser edition.
+workbench searches all **5,183 scientific abstracts in BEIR SciFact**. Reproducible
+benchmarks compare four retrieval methods on **300 SciFact queries** and **1,406
+ArguAna counterargument queries**, using the shared ranking engine and pinned
+model artifacts. A separate HTTP load experiment measures the Python backend.
 
 ## Try it
 
@@ -105,15 +106,15 @@ hashes, timings, bootstrap intervals, and comparisons against BM25.
 
 | Method | nDCG@10 | MRR@10 | Recall@10 | Recall@100 | Median search |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| BM25 | 0.6629 | 0.6316 | 0.7833 | 0.8826 | 1.05 ms |
-| Dense MiniLM | 0.6465 | 0.6056 | 0.7867 | 0.9250 | 6.13 ms |
-| Hybrid (RRF) | 0.6802 | 0.6448 | 0.8096 | 0.9550 | 6.83 ms |
-| Hybrid + reranking | 0.6807 | 0.6492 | 0.8062 | 0.9550 | 447.84 ms |
+| BM25 | 0.6629 | 0.6316 | 0.7833 | 0.8826 | 0.95 ms |
+| Dense MiniLM | 0.6465 | 0.6056 | 0.7867 | 0.9250 | 6.46 ms |
+| Hybrid (RRF) | 0.6802 | 0.6448 | 0.8096 | 0.9550 | 6.68 ms |
+| Hybrid + reranking | 0.6809 | 0.6484 | 0.8096 | 0.9550 | 466.54 ms |
 
 Hybrid retrieved more of the judged relevant papers within its first 100 results.
 Its nDCG@10 improvement over BM25 was 0.0173, with a paired 95% bootstrap interval
 of −0.0055 to +0.0398. That interval includes zero. Reranking added little average
-ranking quality while taking roughly 66 times as long as hybrid search in this
+ranking quality while taking roughly 70 times as long as hybrid search in this
 run. Those trade-offs matter more than declaring one method the winner.
 
 All 300 queries completed in all four modes. An independent `trec_eval` audit
@@ -127,9 +128,61 @@ uses WebAssembly, so live latency depends on the visitor's device.
 The original [six-document Python fixture](docs/evaluation.md) remains a regression
 check. Its near-perfect scores are not the headline benchmark.
 
+### A second task: finding counterarguments
+
+ArguAna contains **8,674 arguments and 1,406 test queries**. It asks the system
+to find a relevant counterargument, which is a different task from finding
+scientific evidence. The settings and model revisions are the same as SciFact's.
+
+| Method | nDCG@10 | MRR@10 | Recall@10 | Recall@100 | Median search |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| BM25 | 0.4209 | 0.3358 | 0.6942 | 0.9189 | 9.05 ms |
+| Dense MiniLM | 0.5002 | 0.4114 | 0.7859 | 0.9787 | 11.11 ms |
+| Hybrid (RRF) | 0.5024 | 0.4137 | 0.7866 | 0.9822 | 19.30 ms |
+| Hybrid + reranking | 0.4809 | 0.3910 | 0.7724 | 0.9822 | 281.12 ms |
+
+Hybrid improved nDCG@10 over BM25 by **0.0816**, with a paired 95% interval of
+**[0.0707, 0.0925]**. Reranking lowered the mean score compared with hybrid and
+cost about 14.6 times as much latency. Adding another model was not automatically
+an improvement. All **28,120 per-query metric values** matched `trec_eval`.
+
+The evaluator excludes query self-matches before ranking cutoffs and retains
+five queries whose relevant documents are absent from the dataset. A token audit
+also caught and corrected long-input truncation that could remove the candidate
+from the reranker's input. Both benchmarks were measured again after that fix;
+the earlier SciFact report remains available. [ArguAna protocol, results and limitations](docs/arguana-evaluation.md)
+
+The live search collection remains SciFact. ArguAna appears in the Results view
+as an offline benchmark, with links to its full report.
+
+### Python API under concurrent requests
+
+The load harness ingests **1,000 SciFact documents** through the real API, then
+searches them using **32 distinct training-split queries**. It runs three
+30-second trials each at **1, 4, 8 and 16 concurrent clients**, with trained CPU
+embeddings, SQLite, native Qdrant and one Uvicorn worker. All request observations
+and trial summaries are saved, including failures and drain time.
+
+| Concurrent clients | Successful req/s | p95 latency | Failed requests |
+| --- | ---: | ---: | ---: |
+| 1 | 7.84 | 205 ms | 0 / 707 |
+| 4 | 8.14 | 601 ms | 0 / 743 |
+| 8 | 8.12 | 1,087 ms | 0 / 753 |
+| 16 | 7.99 | 2,171 ms | 0 / 764 |
+
+All **2,967 measured requests succeeded**. More clients mainly increased
+latency; throughput stayed near eight requests per second. This is consistent
+with the backend's serialized retrieval path, and gives a concrete reason to
+measure and redesign that boundary before scaling the service.
+
+These measurements cover warm, read-only HTTP search on one machine. They do
+not measure GitHub Pages traffic or establish an internet SLA, authenticated
+multi-user access or maximum production capacity. The tiny embedding model also
+differs from the browser's MiniLM. [Load protocol, results and reproduction](docs/load-testing.md)
+
 ## Architecture
 
-![RAGForge architecture: SciFact index preparation and offline evaluation feed the GitHub Pages browser workbench; the Python backend runs separately](docs/architecture-scifact.png)
+![RAGForge architecture: SciFact browser search, SciFact and ArguAna evaluation, and isolated Python API load testing](docs/architecture-evaluation.png)
 
 GitHub Actions builds the website and publishes it to GitHub Pages. Retrieval and
 optional model inference run in the visitor's browser. The full Python backend
@@ -157,7 +210,7 @@ static build checks. [Verification record](docs/verification.md)
 | `src/ragforge/` | Python ingestion, storage, retrieval, generation and API |
 | `src/ragforge/demo/` | Shared workbench UI and isolated Python demo |
 | `web/` | Browser retrieval, model runtime, tests and Pages build |
-| `benchmarks/` | SciFact preparation, fixed evaluation protocol and public index |
+| `benchmarks/` | Dataset preparation, retrieval evaluation, API load harness and public summaries |
 | `tests/` | Python unit, contract and integration tests |
 | `evaluations/results/` | Recorded measurements and provenance |
 | `docs/` | Design decisions, setup, operations and limitations |
@@ -165,6 +218,6 @@ static build checks. [Verification record](docs/verification.md)
 [Architecture diagram](docs/architecture.md) · [Verification](docs/verification.md) · [Security and trust boundaries](docs/security.md) · [Implementation decisions](docs/implementation-notes.md)
 
 The backend is designed for one trusted operator. The browser workbench searches
-a fixed public research collection. Original code is MIT licensed; SciFact data,
+a fixed public research collection. Original code is MIT licensed; benchmark data,
 PDF extraction and model weights have separate terms.
 [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)

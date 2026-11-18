@@ -21,7 +21,28 @@ attribution and license. No endorsement by the dataset authors is implied.
 - David Wadden et al. (2020), [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/), EMNLP.
 - Nandan Thakur et al. (2021), [BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://github.com/beir-cellar/beir), NeurIPS Datasets and Benchmarks.
 
-## Software and models
+## ArguAna benchmark data
+
+The additional retrieval benchmark uses the BEIR distribution of ArguAna
+Counterargs by Henning Wachsmuth, Shahbaz Syed and Benno Stein (2018).
+[Paper](https://aclanthology.org/P18-1023/) ·
+[Original dataset](https://webis.de/data/arguana-counterargs.html) ·
+[BEIR dataset card](https://huggingface.co/datasets/BeIR/arguana)
+
+The [original Zenodo record](https://zenodo.org/records/3973258) identifies the
+original release as CC BY 4.0. The BEIR mirror labels its distribution
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Redistributed
+BEIR-derived query text and data adaptations in the ArguAna report retain the
+CC BY-SA 4.0 notice. The repository's MIT license covers original program code,
+not a replacement license for this third-party data.
+
+RAGForge preserves official query/document IDs and query text, derives document
+vectors, and adds rankings, measurements and provenance. Raw corpus downloads
+and the ArguAna vector cache are obtained locally by the reproduction script;
+they are not included in the GitHub Pages artifact. Attribution does not imply
+endorsement by the authors, Webis, BEIR or the source debate platform.
+
+## Software and model dependencies
 
 PDF extraction uses PyMuPDF, distributed under GNU AGPL or a commercial license. Review the applicable terms for your distribution or hosted deployment. [PyMuPDF licensing](https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright)
 
