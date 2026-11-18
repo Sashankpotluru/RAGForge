@@ -1,0 +1,17 @@
+{
+  "model": {
+    "id": "Xenova/ms-marco-MiniLM-L-6-v2",
+    "revision": "a09144355adeed5f58c8ed011d209bf8ee5a1fec"
+  },
+  "pair_limit": 256,
+  "queries": 1406,
+  "max_query_tokens_including_specials": 1087,
+  "original_queries_with_zero_candidate_positions": 519,
+  "corrected_queries_with_zero_candidate_content_tokens": 0,
+  "method": "Compare two fixed candidate texts with distinct prefixes for every official query. Also compare short batched inputs, masks and type IDs against the native tokenizer.",
+  "example": {
+    "query_id": "test-environment-aeghhgwpe-pro02a",
+    "query_tokens_including_specials": 828,
+    "original_pair_positions": 256
+  }
+}

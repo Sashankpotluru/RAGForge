@@ -106,3 +106,29 @@ test("each method removes the self-ID before the top-100 cutoff and reranking", 
   }
   await assert.rejects(rank(index, longQuery, "bm25", models), /500/);
 });
+
+test("BERT pair truncation preserves both segments, separators and masks", async () => {
+  const { packPair, pairInputs } = await import("../neural.mjs");
+  const long = Array(500).fill(5);
+  const short = [7, 8];
+  const pair = packPair(long, short, 101, 102);
+  assert.equal(pair.input_ids.length, 256);
+  assert.deepEqual(pair.input_ids.slice(-4), [102, 7, 8, 102]);
+  assert.deepEqual(pair.token_type_ids.slice(-4), [0, 1, 1, 1]);
+  assert.notDeepEqual(pair.input_ids, packPair(long, [4, 8], 101, 102).input_ids);
+  assert.deepEqual(packPair(short, long, 101, 102).input_ids.slice(0, 5), [101, 7, 8, 102, 5]);
+  const both = packPair(long, long, 101, 102);
+  assert.equal(both.token_type_ids.filter(id => id === 0).length - 2, 127);
+  assert.equal(both.token_type_ids.filter(id => id === 1).length - 1, 126);
+  const fits = packPair([1], [2], 101, 102);
+  assert.deepEqual(fits.input_ids, [101, 1, 102, 2, 102]);
+  assert.deepEqual(fits.token_type_ids, [0, 0, 0, 1, 1]);
+  assert.throws(() => packPair([], short, 101, 102));
+  assert.throws(() => packPair(short, [], 101, 102));
+  const runtime = { Tensor: class { constructor(type, data, dims) { Object.assign(this, { type, data, dims }); } } };
+  const batch = pairInputs(runtime, [fits, packPair([1, 2], [3, 4], 101, 102)], 19);
+  assert.deepEqual(batch.input_ids.dims, [2, 7]);
+  assert.deepEqual([...batch.input_ids.data.slice(0, 7)], [101n, 1n, 102n, 2n, 102n, 19n, 19n]);
+  assert.deepEqual([...batch.token_type_ids.data.slice(0, 7)], [0n, 0n, 0n, 1n, 1n, 0n, 0n]);
+  assert.deepEqual([...batch.attention_mask.data.slice(0, 7)], [1n, 1n, 1n, 1n, 1n, 0n, 0n]);
+});

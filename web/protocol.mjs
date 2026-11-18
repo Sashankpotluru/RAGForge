@@ -8,7 +8,7 @@ export const protocol = {
   version: "scifact-v1", modes: ["bm25", "dense", "hybrid", "hybrid_rerank"],
   bm25: { k1: 1.2, b: 0.75 }, candidateDepth: 100, rrfK: 60,
   rerankDepth: 50, displayDepth: 10, dtype: "q8", dimension: 384,
-  embeddingTokens: 256, pairTokens: 256, embeddingBatch: 8, rerankBatch: 8,
+  embeddingTokens: 256, pairTokens: 256, pairTruncation: "longest_first", embeddingBatch: 8, rerankBatch: 8,
   bootstrapSamples: 2000, seed: 20261118, models,
 };
 export const passage = doc => doc.title + "\n" + doc.content;
