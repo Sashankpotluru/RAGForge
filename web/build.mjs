@@ -2,6 +2,7 @@ import { datasets, paths } from "../benchmarks/dataset.mjs";
 import { protocol } from "./protocol.mjs";
 import { sha256, validateCorpus, validateVectors } from "./vector-index.mjs";
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { isDeepStrictEqual } from "node:util";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -23,8 +24,8 @@ export async function validateRelease(dataset, manifest, reportBytes, summary, a
       audit.test_qrels_sha256 !== dataset.files["qrels/test.tsv"]) throw Error("Evaluation digest or audit mismatch.");
   const evidence = JSON.parse(reportBytes);
   const measured = evidence.summary;
-  if (evidence.protocol.version !== dataset.run || evidence.protocol.dataset.sha256 !== dataset.sha256 ||
-      evidence.protocol.dataset.files["qrels/test.tsv"] !== dataset.files["qrels/test.tsv"] || manifest.version !== dataset.index ||
+  if (!isDeepStrictEqual(evidence.protocol.dataset, dataset)) throw Error("Dataset source registry differs from measured release.");
+  if (evidence.protocol.version !== dataset.run || manifest.version !== dataset.index ||
       manifest.dataset_sha256 !== dataset.sha256 || manifest.rows !== dataset.documents ||
       measured.dataset !== "BEIR " + dataset.name || measured.documents !== dataset.documents ||
       measured.queries !== dataset.test || measured.runs.map(r => r.mode).join() !== protocol.modes.join() ||
@@ -32,9 +33,10 @@ export async function validateRelease(dataset, manifest, reportBytes, summary, a
       await sha256(new TextEncoder().encode(evidence.queries.map(q => q.id).sort().join("\n"))) !== testIds[dataset.key]) {
     throw Error("Incomplete release for " + dataset.name);
   }
-  for (const key of ["corpus_sha256", "row_ids_sha256", "vector_sha256", "dataset_sha256"]) {
-    if (evidence.preparation.manifest[key] !== manifest[key]) throw Error("Index differs from measured release: " + key);
-  }
+  // A fresh preparation can change wall time while reproducing identical index bytes.
+  const { preprocessing_ms: measuredTiming, ...measuredIndex } = evidence.preparation.manifest;
+  const { preprocessing_ms: localTiming, ...releaseIndex } = manifest;
+  if (!isDeepStrictEqual(measuredIndex, releaseIndex)) throw Error("Index metadata differs from measured release.");
   const aggregates = measured.runs.map(({ examples, ...aggregate }) => aggregate);
   const expected = { ...measured, runs: aggregates, run: dataset.run, run_at: evidence.provenance.started_at,
     hardware: evidence.provenance.cpu, node: evidence.provenance.node, report_sha256: reportHash };

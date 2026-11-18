@@ -47,6 +47,11 @@ test("release binding rejects a mismatched summary, manifest, report or audit", 
   const audit = JSON.parse(await readFile(base + "-metric-audit.json"));
   await assert.rejects(validateRelease(dataset, manifest, report, { ...summary, documents: 0 }, audit), /summary/i);
   await assert.rejects(validateRelease(dataset, { ...manifest, row_ids_sha256: "0" }, report, summary, audit), /Index/);
+  const alteredSource = { ...dataset, files: { ...dataset.files, "queries.jsonl": "0".repeat(64) } };
+  await assert.rejects(validateRelease(alteredSource, manifest, report, summary, audit), /source/i);
+  await assert.rejects(validateRelease(dataset, { ...manifest, dimension: 1 }, report, summary, audit), /Index/);
+  await assert.rejects(validateRelease(dataset, { ...manifest, model: { ...manifest.model, revision: "wrong" } },
+    report, summary, audit), /Index/);
   await assert.rejects(validateRelease(dataset, manifest, Buffer.from("changed"), summary, audit), /digest/);
   await assert.rejects(validateRelease(dataset, manifest, report, summary, { ...audit, comparisons: 0 }), /audit/);
 });
