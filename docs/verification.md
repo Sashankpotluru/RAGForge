@@ -76,7 +76,7 @@ The [evaluation report](evaluation.md) links all per-case results, settings,
 model revisions, source provenance, and latency measurements. These are small
 fixture measurements, not general quality or capacity claims.
 
-## Browser demo
+## Python-backed demo (initial release)
 
 The separate sample workbench was exercised in a browser at desktop (1280px)
 and phone (390px) widths. Search, generated answers, citation navigation, corpus,
@@ -95,12 +95,12 @@ sample index, rejection of existing storage, independence from private backend
 configuration, body limits, globally shared rate limits, and concurrent-generation
 rejection. [Demo operation and limits](demo.md)
 
-The [public HTTPS session](https://apt-generated-arbitrary-features.trycloudflare.com)
-was checked on 2026-11-18: page, health, corpus, results and diagram returned 200;
+The original temporary HTTPS session was checked on 2026-11-18: page, health,
+corpus, results and diagram returned 200;
 real local generation returned cited evidence; administration routes returned 404,
 unknown query fields 422, oversized bodies 413, and path traversal 404. The browser
 also completed generation and followed its citation to the matching passage.
-This is a temporary tunnel to the read-only demo, not permanent managed hosting.
+That deployment used a temporary tunnel to the read-only Python demo.
 
 ## Review and boundaries
 
@@ -109,7 +109,9 @@ recovery, staged-vector cleanup, chunking, metadata scope validation, and query
 score provenance. The release includes regression tests for the accepted findings.
 CLI input-error handling is also covered by regression tests.
 
-The architecture source and PNG/SVG exports were rendered and visually inspected.
+The original architecture reference was rendered and visually inspected. The
+current presentation image is the supplied PNG, copied unchanged into the docs
+and demo assets (SHA-256 `0150e1c11c4b22821c6a2fb6874a61ff260bad16b23073d4cefb7361f5c29afc`).
 The portfolio root contains exactly the ten requested project directories; only
 RAGForge is implemented.
 
@@ -119,7 +121,7 @@ Not verified or delivered in this release:
 - Hosted LLM compatibility or answer entailment using a real provider.
 - Production load, multi-worker consistency, tenant authorization, or general
   retrieval improvement on an independent real-world benchmark.
-- Permanent hosted deployment or the other nine portfolio projects.
+- Managed Python backend hosting or the other nine portfolio projects.
 
 The [security boundaries](security.md) and [implementation decisions](implementation-notes.md)
 are part of the release contract, not optional production-hardening claims.

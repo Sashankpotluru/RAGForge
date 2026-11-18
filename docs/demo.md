@@ -1,5 +1,9 @@
 # Sample evidence workbench
 
+This guide runs the Python-backed demo on your own machine. The
+[hosted browser edition](https://sashankpotluru.github.io/RAGForge/) runs on GitHub
+Pages and has a separate [setup guide](browser-demo.md).
+
 The workbench serves six original synthetic policy documents. Open Workbench to search, Corpus to read each full source, Results to compare the recorded retrieval measurements, and Architecture to follow the data flow. Clicking a sample question fills the question field. Find evidence runs retrieval. Generate answer runs retrieval followed by local inference.
 
 ## Start on loopback
