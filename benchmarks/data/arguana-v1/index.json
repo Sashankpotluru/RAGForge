@@ -1,0 +1,24 @@
+{
+  "version": "arguana-v1",
+  "rows": 8674,
+  "dimension": 384,
+  "encoding": "float32-le",
+  "model": {
+    "id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+  },
+  "dtype": "q8",
+  "max_tokens": 256,
+  "input": "title + newline + argument",
+  "pooling": "attention-masked mean, L2-normalized",
+  "row_order": "official corpus.jsonl order; hash of UTF-8 IDs joined with LF, no final LF",
+  "row_ids_sha256": "9a5dd274b64587e9e167a2b7f3e86fce6f41306d38be87c5cd826eebd97210fa",
+  "corpus_sha256": "f156b26b652fffa3750fefef94dce29d326a07b759475e534d13fd2d5427a33f",
+  "vector_bytes": 13323264,
+  "vector_sha256": "6f078a4c9d3782c6ef14088da40c65b9aba24afd849d5035a180b5bfd4a3e7ff",
+  "dataset_sha256": "cfdf79adce27a401b3cd3ea267903134dbfab2c6afeb95d7fe5724a00bf7557b",
+  "preprocessing_ms": {
+    "load_and_embed": 83600.91075000001,
+    "total_to_serialization": 83792.66104199999
+  }
+}

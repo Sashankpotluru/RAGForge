@@ -1,7 +1,7 @@
 """Audit saved BEIR ranks against trec_eval, without running the models.
 
 Install pytrec-eval-terrier==0.5.11 in a separate environment. Run from the
-repository root after `npm run prepare --prefix benchmarks`.
+repository root with the corresponding checksum-pinned source qrels.
 """
 
 from __future__ import annotations

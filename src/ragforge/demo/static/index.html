@@ -60,15 +60,20 @@
       <section id="results" hidden>
         <h1>Retrieval results</h1>
         <p class="intro">Retrieval quality and measured latency.</p>
+        <div id="dataset-picker" class="mode-field" hidden>
+          <label for="benchmark-dataset">Benchmark dataset</label>
+          <select id="benchmark-dataset" aria-controls="metrics"></select>
+        </div>
         <div id="metrics" class="sheet" tabindex="0" role="region" aria-label="Retrieval metrics"></div>
         <p id="metric-guide" class="note">Hit rate measures how often the first result contains relevant evidence. Mean reciprocal rank (MRR) gives more credit when relevant evidence appears earlier in the first ten results.</p>
+        <section id="backend-capacity" hidden aria-label="Backend capacity"></section>
       </section>
       <section id="architecture" hidden>
         <h1>Architecture</h1>
         <p class="intro">In the GitHub Pages edition, GitHub Actions publishes the website and the visitor's browser runs retrieval and optional models. The local edition uses the separate Python backend.</p>
         <figure class="sheet">
-          <a href="./assets/architecture-scifact.png" aria-label="Open the full-size architecture diagram"><img src="./assets/architecture-scifact.png" alt="SciFact abstracts and precomputed vectors feed browser retrieval on GitHub Pages. Node evaluates the same methods on test claims. Flan-T5 generates optional browser answers, and the Python backend runs separately." loading="lazy"></a>
-          <figcaption>SciFact preparation, browser search, benchmark evaluation and the local Python service. Select the diagram to inspect it at full size.</figcaption>
+          <a href="./assets/architecture-evaluation.png" aria-label="Open the full-size architecture diagram"><img src="./assets/architecture-evaluation.png" alt="SciFact powers the browser workbench. SciFact and ArguAna benchmarks measure retrieval quality, and a separate HTTP load test measures the Python backend." loading="lazy"></a>
+          <figcaption>Browser search, retrieval benchmarks and local Python backend measurements. Select the diagram to inspect it at full size.</figcaption>
         </figure>
       </section>
       <noscript>Enable JavaScript to search this corpus.</noscript>

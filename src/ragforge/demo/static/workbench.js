@@ -210,8 +210,11 @@ function link(text, href) {
   return anchor;
 }
 function renderBenchmark(results) {
-  document.querySelector("#results .intro").textContent = results.runs.length + " retrieval methods on " + results.queries
-    + " official SciFact test claims and " + results.documents.toLocaleString() + " abstracts.";
+  byId("metrics").replaceChildren();
+  const arguana = results.run === "arguana-v1";
+  document.querySelector("#results .intro").textContent = results.runs.length + " retrieval methods on "
+    + results.queries.toLocaleString() + (arguana ? " ArguAna test arguments and " : " SciFact test claims and ")
+    + results.documents.toLocaleString() + (arguana ? " candidate arguments." : " scientific abstracts.");
   const table = element("table");
   table.createCaption().textContent = "Mean document retrieval quality with 95% query-bootstrap intervals";
   const head = table.createTHead().insertRow();
@@ -250,14 +253,27 @@ function renderBenchmark(results) {
   const pairedNote = element("p", overlap.length + " of " + alternatives.length
     + " paired nDCG intervals relative to BM25 include zero.", "note");
   const data = element("p", undefined, "note");
-  data.append(link("Full per-query results", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/main/evaluations/results/scifact-v1.json"),
-    " · ", link("Methodology and paired comparisons", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/scifact-evaluation.md"));
-  byId("metrics").append(table, pairedNote, comparisons, element("p", "Measured on " + results.hardware + " using Node " + results.node
-    + " after model warmup. Browser downloads, initialization and answer generation are excluded.", "note"), data);
-  byId("metric-guide").textContent = "nDCG rewards relevant papers near the top. Recall measures the fraction of judged relevant papers retrieved. MRR measures how early the first relevant paper appears. Hit rate counts top-ranked relevant papers. Intervals summarize variation across these test claims.";
+  const repository = "https://github.com/Sashankpotluru/RAGForge/blob/main/";
+  data.append(link("Full per-query results", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/main/evaluations/results/" + results.run + ".json"),
+    " · ", link("Methodology and paired comparisons", repository + "docs/" + (arguana ? "arguana" : "scifact") + "-evaluation.md"));
+  byId("metrics").append(table, pairedNote, comparisons,
+    element("p", "Both datasets use up to 100 candidates per retriever, reciprocal rank fusion with k = 60, "
+      + "a 50-document reranking window and 256-token neural inputs. Intervals use 2,000 paired resamples.", "note"),
+    element("p", "Measured on " + results.hardware + " using Node " + results.node
+      + " after model warmup. Times cover retrieval and model inference on this host.", "note"), data);
+  byId("metric-guide").textContent = arguana
+    ? "Relevance means a judged counterargument. Each query’s own document ID is excluded. Five queries have an absent relevant document and contribute zero. The reranker keeps the beginnings of both arguments within 256 tokens."
+    : "nDCG rewards relevant papers near the top. Recall measures the fraction of judged relevant papers retrieved. MRR measures how early the first relevant paper appears. Hit rate counts top-ranked relevant papers.";
 }
 function renderResults(results, corpus) {
-  if (browser) return renderBenchmark(results);
+  if (browser) {
+    const select = byId("benchmark-dataset");
+    for (const report of results) select.add(new Option(report.dataset, report.run));
+    byId("dataset-picker").hidden = false;
+    select.onchange = () => renderBenchmark(results[select.selectedIndex]);
+    renderBenchmark(results[0]);
+    return;
+  }
   document.querySelector("#results .intro").textContent = "Recorded Python backend measurements for " + corpus.questions.length + " fixture questions across " + corpus.documents.length + " synthetic policies.";
   const table = element("table");
   table.createCaption().textContent = "Python backend fixture evaluation";

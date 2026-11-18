@@ -11,7 +11,9 @@ def test_demo_boundary(tmp_path: Path) -> None:
         for path in ("/v1/documents", "/v1/documents/url", "/v1/evaluate"):
             assert client.post(path).status_code == 404
         assert client.get("/").status_code == 200
-        assert client.get("/assets/architecture-scifact.png").headers["content-type"] == "image/png"
+        assert (
+            client.get("/assets/architecture-evaluation.png").headers["content-type"] == "image/png"
+        )
         assert client.get("/assets/evaluate.mjs").status_code != 200
         assert len(client.get("/api/corpus").json()["documents"]) == 6
         assert (

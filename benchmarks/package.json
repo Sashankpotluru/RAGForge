@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "engines": { "node": "22.x" },
-  "scripts": { "prepare": "node prepare.mjs", "evaluate": "node evaluate.mjs" },
+  "scripts": { "prepare:data": "node prepare.mjs", "evaluate": "node evaluate.mjs" },
   "dependencies": { "@huggingface/transformers": "3.8.1", "fflate": "0.8.2" }
 }

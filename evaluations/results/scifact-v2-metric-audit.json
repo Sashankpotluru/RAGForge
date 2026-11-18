@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "tool": "pytrec-eval-terrier",
+  "version": "0.5.11",
+  "report_sha256": "a815317ef58a64a0c8104f10cc0c95f7e799b872232e0812b1111710e55d9332",
+  "test_qrels_sha256": "0864bb985e0ca2367ba217977e72004d549054b2b06666ed9d4825ac7c21284c",
+  "queries": 300,
+  "modes": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_rerank"
+  ],
+  "metrics": [
+    "hit_rate@1",
+    "ndcg@10",
+    "recall@10",
+    "recall@100",
+    "mrr@10"
+  ],
+  "comparisons": 6000,
+  "max_absolute_error": 0.0,
+  "tolerance": 1e-12,
+  "scope": "Per-query metric values; excludes bootstrap intervals and model inference."
+}

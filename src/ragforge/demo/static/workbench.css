@@ -146,3 +146,5 @@ figcaption { margin-top: 12px; max-width: 75ch; }
 .passage details { margin-top: 8px; }
 .comparisons { margin: 9px 0 14px; font-size: .9rem; }
 .comparisons ul { padding-left: 20px; }
+
+#dataset-picker { margin-bottom: 14px; }
