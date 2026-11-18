@@ -11,3 +11,5 @@ data/public-demo*/
 dist/
 /results/
 
+data/scifact/
+node_modules/

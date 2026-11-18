@@ -1,0 +1,24 @@
+{
+  "version": "scifact-v1",
+  "rows": 5183,
+  "dimension": 384,
+  "encoding": "float32-le",
+  "model": {
+    "id": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+  },
+  "dtype": "q8",
+  "max_tokens": 256,
+  "input": "title + newline + abstract",
+  "pooling": "attention-masked mean, L2-normalized",
+  "row_order": "official corpus.jsonl order; hash of UTF-8 IDs joined with LF, no final LF",
+  "row_ids_sha256": "987f20b5ce1eabc39c9804b89d14d78e980fec07f88d2192e1d52946a8b3813f",
+  "corpus_sha256": "e2aaf10771d2b4ada0e99863617fce70534040dac6947f144c73cc595a8609c4",
+  "vector_bytes": 7961088,
+  "vector_sha256": "1dfaf5677ca4b843a52d5dcf8b54c4da7d0ffc1bad9b50ce40096e1752a94e17",
+  "dataset_sha256": "536e14446a0ba56ed1398ab1055f39fe852686ecad24a6306c80c490fa8e0165",
+  "preprocessing_ms": {
+    "load_and_embed": 54990.025209,
+    "total_to_serialization": 55127.00475
+  }
+}

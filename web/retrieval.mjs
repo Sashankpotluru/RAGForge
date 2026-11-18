@@ -1,95 +1,97 @@
-const stopWords = new Set("a an and are as at be by do does for from how in is it of on or the to what when which who with".split(" "));
+import { protocol } from "./protocol.mjs";
 
+const stopWords = new Set("a an and are as at be by do does for from how in is it of on or the to what when which who with".split(" "));
 function terms(text) {
   return (text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []).filter(word => !stopWords.has(word));
 }
 
 export function validateQuery(raw) {
   const query = raw.trim();
-  if (!query || [...query].length > 500) throw Error("Enter a question of 1–500 characters.");
+  if (!query || [...query].length > 500) throw Error("Enter a search query of 1–500 characters.");
   return query;
 }
 
-export function rankScores(scores) {
-  return scores.map((_, i) => i).sort((a, b) => scores[b] - scores[a] || a - b);
-}
-
-export function bm25(documents, query) {
-  const passages = documents.map(d => terms(d.title + " " + d.content));
-  const meanLength = passages.reduce((sum, words) => sum + words.length, 0) / passages.length;
-  const scores = passages.map(() => 0);
-  for (const word of new Set(terms(query))) {
-    const counts = passages.map(p => p.filter(token => token === word).length);
-    const df = counts.filter(n => n > 0).length;
-    const idf = Math.log1p((passages.length - df + 0.5) / (df + 0.5));
-    for (const [i, count] of counts.entries()) {
-      if (!count) continue;
-      const normalizer = 1.2 * (0.25 + 0.75 * passages[i].length / meanLength);
-      scores[i] += idf * count * 2.2 / (count + normalizer);
+export function createIndex(documents) {
+  const postings = new Map();
+  const lengths = [];
+  for (const [row, doc] of documents.entries()) {
+    const words = terms(doc.title + " " + doc.content);
+    lengths.push(words.length);
+    const counts = new Map();
+    for (const word of words) counts.set(word, (counts.get(word) ?? 0) + 1);
+    for (const [word, count] of counts) {
+      if (!postings.has(word)) postings.set(word, []);
+      postings.get(word).push([row, count]);
     }
   }
-  return rankScores(scores).filter(i => scores[i] > 0);
+  const meanLength = lengths.reduce((sum, n) => sum + n, 0) / lengths.length || 1;
+  const { k1, b } = protocol.bm25;
+  const normalizers = lengths.map(length => k1 * (1 - b + b * length / meanLength));
+  return { documents, postings, normalizers };
 }
 
-export function fuse(...rankings) {
+function byScore(a, b) { return b.score - a.score || a.row - b.row; }
+
+function keyword(index, query) {
+  const scores = new Map();
+  for (const term of new Set(terms(query))) {
+    const posting = index.postings.get(term);
+    if (!posting) continue;
+    const idf = Math.log1p((index.documents.length - posting.length + 0.5) / (posting.length + 0.5));
+    for (const [row, count] of posting) {
+      const gain = idf * count * (protocol.bm25.k1 + 1) / (count + index.normalizers[row]);
+      scores.set(row, (scores.get(row) ?? 0) + gain);
+    }
+  }
+  return [...scores].map(([row, score]) => ({ row, score })).sort(byScore).slice(0, protocol.candidateDepth);
+}
+
+function fusion(rankings) {
   const scores = new Map();
   for (const ranking of rankings) {
-    const unique = [...new Set(ranking)];
-    unique.forEach((id, i) => scores.set(id, (scores.get(id) ?? 0) + 1 / (60 + i + 1)));
+    [...new Set(ranking)].slice(0, protocol.candidateDepth).forEach((row, i) => {
+      scores.set(row, (scores.get(row) ?? 0) + 1 / (protocol.rrfK + i + 1));
+    });
   }
-  return [...scores.keys()].sort((a, b) => scores.get(b) - scores.get(a) || a - b);
+  return [...scores].map(([row, score]) => ({ row, score })).sort(byScore).slice(0, protocol.candidateDepth);
 }
 
-function checkedRanks(scores, count) {
-  if (scores.length !== count || !scores.every(Number.isFinite)) {
-    throw Error("The model returned invalid passage scores. Retry this search.");
-  }
-  return rankScores(scores);
+function checkedScores(scores, count) {
+  if (scores.length !== count || !scores.every(Number.isFinite)) throw Error("Invalid model scores.");
+  return Array.from(scores, (score, row) => ({ row, score }));
 }
 
-export async function search(documents, raw, mode, models) {
+export function dotScores(vectors, query) {
+  if (query.length !== protocol.dimension || vectors.length % query.length !== 0) throw Error("Embedding dimensions disagree.");
+  const scores = new Float64Array(vectors.length / query.length);
+  for (let row = 0; row < scores.length; row++) {
+    let score = 0;
+    const offset = row * query.length;
+    for (let j = 0; j < query.length; j++) score += vectors[offset + j] * query[j];
+    scores[row] = score;
+  }
+  return scores;
+}
+
+export async function rank(index, raw, mode, models) {
   const query = validateQuery(raw);
-  let ranked;
-  if (mode === "bm25") {
-    ranked = bm25(documents, query);
-  } else {
-    if (!["dense", "hybrid", "hybrid_rerank"].includes(mode)) throw Error("Unknown retrieval mode.");
-    const scores = await models.dense(query, documents);
-    ranked = checkedRanks(scores, documents.length);
-    if (mode !== "dense") ranked = fuse(ranked, bm25(documents, query));
-    if (mode === "hybrid_rerank") {
-      const candidates = ranked.map(i => documents[i]);
-      const scores = await models.rerank(query, candidates);
-      ranked = checkedRanks(scores, candidates.length).map(i => ranked[i]);
-    }
-  }
-  return ranked.map((i, rank) => ({
-    citation_id: "C" + (rank + 1), title: documents[i].title,
-    source: documents[i].source, quote: documents[i].content,
-  }));
+  if (mode === "bm25") return keyword(index, query);
+  if (!protocol.modes.includes(mode)) throw Error("Unknown retrieval mode.");
+  const dense = checkedScores(await models.dense(query), index.documents.length)
+    .sort(byScore).slice(0, protocol.candidateDepth);
+  if (mode === "dense") return dense;
+  const hybrid = fusion([dense.map(r => r.row), keyword(index, query).map(r => r.row)]);
+  if (mode === "hybrid") return hybrid;
+  const head = hybrid.slice(0, protocol.rerankDepth);
+  const scores = await models.rerank(query, head.map(hit => index.documents[hit.row]));
+  const reranked = checkedScores(scores, head.length).map(({ row, score }) =>
+    ({ row: head[row].row, score, stage: "cross_encoder" })).sort(byScore);
+  return [...reranked, ...hybrid.slice(head.length).map(hit => ({ ...hit, stage: "rrf_tail" }))];
 }
 
-export function cite(raw, hits, contextCount = hits.length) {
-  const text = raw.trim();
-  const phrase = text.replace(/[.!?]+$/u, "");
-  if (phrase.split(/\s+/u).length >= 2 && !/\[C\d+\]/iu.test(text)) {
-    const escaped = phrase.replace(/[.*+?^{}$()|[\]\\]/g, "\\$&");
-    const pattern = new RegExp("(?<![\\p{L}\\p{N}_])" + escaped + "(?![\\p{L}\\p{N}_])", "iu");
-    const matches = hits.filter(hit => pattern.test(hit.quote));
-    if (matches.length === 1 && hits.indexOf(matches[0]) < contextCount) {
-      return text + " [" + matches[0].citation_id + "]";
-    }
-  }
-  throw Error("The generated words could not be matched to a single supplied source passage.");
-}
-
-export function validateAnswer(text, hits, contextCount) {
-  if (/^(unknown|unanswerable|none)[.!]?$/i.test(text.trim())) {
-    return { generation_error: "The model did not find an answer in these sources." };
-  }
-  try {
-    return { answer: cite(text, hits, contextCount) };
-  } catch (error) {
-    return { generation_error: error.message };
-  }
+export function hitsFor(documents, ranking) {
+  return ranking.slice(0, protocol.displayDepth).map(({ row }, i) => {
+    const doc = documents[row];
+    return { citation_id: "C" + (i + 1), title: doc.title, source: doc.source, quote: doc.content, document_id: doc.id };
+  });
 }
