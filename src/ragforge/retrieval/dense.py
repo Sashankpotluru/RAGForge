@@ -30,10 +30,10 @@ class HashEmbedding:
 
 
 class SentenceTransformerEmbedding:
-    def __init__(self, model: str, revision: str | None = None) -> None:
+    def __init__(self, model: str, revision: str | None = None, device: str | None = None) -> None:
         from sentence_transformers import SentenceTransformer
 
-        self._model: Any = SentenceTransformer(model, revision=revision)
+        self._model: Any = SentenceTransformer(model, revision=revision, device=device)
         self.dimensions = int(self._model.get_sentence_embedding_dimension())
 
     def encode(self, texts: Sequence[str]) -> list[list[float]]:

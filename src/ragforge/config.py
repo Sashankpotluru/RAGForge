@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     request_timeout_seconds: float = Field(default=20.0, gt=0)
     embedding_model: str = "hash-demo-v1"
     embedding_revision: str | None = None
+    embedding_device: str | None = None
     embedding_dimensions: int = Field(default=256, ge=16, le=4096)
     reranker_model: str | None = None
     reranker_revision: str | None = None

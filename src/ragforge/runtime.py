@@ -43,13 +43,17 @@ class Runtime:
                 "qdrant_url",
             }
         }
+        if settings.embedding_device is not None and settings.embedding_model != "hash-demo-v1":
+            config["embedding_device"] = settings.embedding_device
         encoded = json.dumps(config, sort_keys=True)
         self.config_id = sha256(encoded.encode()).hexdigest()
         self.catalog.check_configuration(encoded, record=False)
         embedding: Embedding = (
             HashEmbedding(settings.embedding_dimensions)
             if settings.embedding_model == "hash-demo-v1"
-            else SentenceTransformerEmbedding(settings.embedding_model, settings.embedding_revision)
+            else SentenceTransformerEmbedding(
+                settings.embedding_model, settings.embedding_revision, settings.embedding_device
+            )
         )
         self.dense = QdrantStore(
             embedding,
