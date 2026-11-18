@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-11-18T18:32:19.741048+00:00",
+  "created_at": "2026-11-18T19:24:06.454847+00:00",
   "dataset_id": "ragforge-original-fixture-v1",
   "dataset_sha256": "ff67676492b462c093d30f450016047ea23700275f068dcf19de0b9953373149",
   "dependencies": {
@@ -8,7 +8,7 @@
     "qdrant-client": "1.20.0",
     "ragforge": "0.1.0"
   },
-  "git_commit": "a439f9028e4bea2ab95a322fc2d00f2f5b137de9",
+  "git_commit": "391adc3894b993290e26e46122a9e1ebc90ac58b",
   "hardware": {
     "concurrency": 1,
     "machine": "arm64",
@@ -29,7 +29,7 @@
           "eligible_relevant_chunk_ids": [
             "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
           ],
-          "latency_ms": 0.9572500130161643,
+          "latency_ms": 1.289541949518025,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -83,7 +83,7 @@
           "eligible_relevant_chunk_ids": [
             "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
           ],
-          "latency_ms": 0.5420410307124257,
+          "latency_ms": 0.7468330441042781,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -137,7 +137,7 @@
           "eligible_relevant_chunk_ids": [
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.4837919259443879,
+          "latency_ms": 0.7065830286592245,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -191,7 +191,7 @@
           "eligible_relevant_chunk_ids": [
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.46954199206084013,
+          "latency_ms": 0.5190829979255795,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -245,7 +245,7 @@
           "eligible_relevant_chunk_ids": [
             "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
           ],
-          "latency_ms": 0.47320802696049213,
+          "latency_ms": 0.524083967320621,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -299,7 +299,7 @@
           "eligible_relevant_chunk_ids": [
             "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
           ],
-          "latency_ms": 0.4617499653249979,
+          "latency_ms": 0.47445797827094793,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -353,7 +353,7 @@
           "eligible_relevant_chunk_ids": [
             "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387"
           ],
-          "latency_ms": 0.46062504407018423,
+          "latency_ms": 0.4657499957829714,
           "metrics": {
             "hit_rate@1": 0.0,
             "hit_rate@10": 1.0,
@@ -407,7 +407,7 @@
           "eligible_relevant_chunk_ids": [
             "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f"
           ],
-          "latency_ms": 0.45608310028910637,
+          "latency_ms": 0.4652499919757247,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -461,7 +461,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.4542090464383364,
+          "latency_ms": 0.45654107816517353,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -515,7 +515,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.45833399053663015,
+          "latency_ms": 0.4555000923573971,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -569,7 +569,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.41179091203957796,
+          "latency_ms": 0.4382090410217643,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -604,7 +604,7 @@
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.4598749801516533,
+          "latency_ms": 0.4605830181390047,
           "metrics": {
             "hit_rate@1": 0.0,
             "hit_rate@10": 1.0,
@@ -660,8 +660,8 @@
       "failures": [],
       "index_id": "f560b75bc19958f34d61df91cb8d77a0484c5ec69e3b5895913e10535b57c49c",
       "latency_ms": {
-        "p50": 0.46062504407018423,
-        "p95": 0.9572500130161643
+        "p50": 0.4657499957829714,
+        "p95": 1.289541949518025
       },
       "metrics": {
         "hit_rate@1": 0.8333333333333334,
@@ -701,7 +701,7 @@
           "eligible_relevant_chunk_ids": [
             "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
           ],
-          "latency_ms": 0.676083960570395,
+          "latency_ms": 0.7129590958356857,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -755,7 +755,7 @@
           "eligible_relevant_chunk_ids": [
             "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
           ],
-          "latency_ms": 0.5776670295745134,
+          "latency_ms": 0.6345839938148856,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -809,7 +809,7 @@
           "eligible_relevant_chunk_ids": [
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.5492500495165586,
+          "latency_ms": 0.5698750028386712,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -863,7 +863,7 @@
           "eligible_relevant_chunk_ids": [
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.5596249829977751,
+          "latency_ms": 1.0334160178899765,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -917,7 +917,7 @@
           "eligible_relevant_chunk_ids": [
             "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
           ],
-          "latency_ms": 0.5612500244751573,
+          "latency_ms": 0.7206669542938471,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -971,7 +971,7 @@
           "eligible_relevant_chunk_ids": [
             "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
           ],
-          "latency_ms": 0.5472499178722501,
+          "latency_ms": 0.6234579486772418,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1025,7 +1025,7 @@
           "eligible_relevant_chunk_ids": [
             "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387"
           ],
-          "latency_ms": 0.5571660585701466,
+          "latency_ms": 0.8203750476241112,
           "metrics": {
             "hit_rate@1": 0.0,
             "hit_rate@10": 1.0,
@@ -1079,7 +1079,7 @@
           "eligible_relevant_chunk_ids": [
             "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f"
           ],
-          "latency_ms": 0.5470829783007503,
+          "latency_ms": 0.6850840291008353,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1133,7 +1133,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.5353749729692936,
+          "latency_ms": 0.5828749854117632,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1187,7 +1187,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.5490409675985575,
+          "latency_ms": 0.6125000072643161,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1241,7 +1241,7 @@
           "eligible_relevant_chunk_ids": [
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
           ],
-          "latency_ms": 0.4490000428631902,
+          "latency_ms": 0.7060839561745524,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1276,7 +1276,7 @@
             "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
             "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
           ],
-          "latency_ms": 0.5600829608738422,
+          "latency_ms": 0.8385839173570275,
           "metrics": {
             "hit_rate@1": 1.0,
             "hit_rate@10": 1.0,
@@ -1332,8 +1332,8 @@
       "failures": [],
       "index_id": "f560b75bc19958f34d61df91cb8d77a0484c5ec69e3b5895913e10535b57c49c",
       "latency_ms": {
-        "p50": 0.5492500495165586,
-        "p95": 0.676083960570395
+        "p50": 0.6850840291008353,
+        "p95": 1.0334160178899765
       },
       "metrics": {
         "hit_rate@1": 0.9166666666666666,
@@ -1367,8 +1367,8 @@
     }
   ],
   "source": {
-    "commit": "a439f9028e4bea2ab95a322fc2d00f2f5b137de9",
-    "dirty": true,
+    "commit": "391adc3894b993290e26e46122a9e1ebc90ac58b",
+    "dirty": false,
     "kind": "git-checkout",
     "version": "0.1.0"
   },
