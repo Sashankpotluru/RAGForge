@@ -1,0 +1,22 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.20.0
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+  api:
+    build: .
+    depends_on:
+      - qdrant
+    restart: on-failure
+    environment:
+      RAGFORGE_QDRANT_URL: http://qdrant:6333
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - api-data:/app/data/runtime
+
+volumes:
+  qdrant-data:
+  api-data:

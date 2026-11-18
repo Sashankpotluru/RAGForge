@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>RAGForge · Evidence workbench</title>
+    <link href="/assets/workbench.css" rel="stylesheet" />
+    <script src="/assets/workbench.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="#workbench">RAGForge</a>
+      <nav aria-label="Views">
+        <a href="#workbench">Workbench</a><a href="#corpus">Corpus</a
+        ><a href="#results">Results</a><a href="#architecture">Architecture</a>
+      </nav>
+    </header>
+    <main>
+      <section id="workbench">
+        <h1>Evidence workbench</h1>
+        <p class="dek">
+          Search six sample policy documents and inspect the passages behind
+          each answer.
+        </p>
+        <div class="desk">
+          <form id="query">
+            <label for="question">Your question</label
+            ><textarea id="question" maxlength="500" rows="3" required>
+How often do database backups run?</textarea
+            ><label for="mode">Retrieval mode</label
+            ><select id="mode"></select>
+            <div class="actions">
+              <button id="search" disabled>Find evidence</button
+              ><button id="answer" type="button" disabled>
+                Generate answer
+              </button>
+            </div>
+            <p id="model"></p>
+            <h2>Sample questions</h2>
+            <div id="samples"></div>
+          </form>
+          <article aria-label="Retrieved evidence">
+            <h2>Source passages</h2>
+            <p role="status" id="status">Loading sample corpus…</p>
+            <div id="generated"></div>
+            <div id="hits"></div>
+          </article>
+        </div>
+      </section>
+      <section id="corpus" hidden>
+        <h1>Sample corpus</h1>
+        <p class="dek">
+          Original synthetic policies used for retrieval and evaluation.
+        </p>
+        <div id="docs"></div>
+      </section>
+      <section id="results" hidden>
+        <h1>Measured results</h1>
+        <p class="dek">
+          Recorded neural retrieval evaluation on twelve synthetic questions
+          across six documents. These values describe this fixture only.
+        </p>
+        <div id="metrics"></div>
+      </section>
+      <section id="architecture" hidden>
+        <h1>Retrieval architecture</h1>
+        <p class="dek">
+          Follow a question through dense retrieval, lexical matching and
+          optional reranking to its cited passages.
+        </p>
+        <a href="/assets/architecture.svg" aria-label="Open full-size architecture diagram">
+          <img src="/assets/architecture.svg" alt="RAGForge architecture diagram" width="1000" />
+        </a>
+        <p>
+          Each query searches the sample collection. Hybrid retrieval fuses
+          dense and lexical rankings. The optional reranker scores those
+          candidates again. The local model extracts an answer from the
+          retrieved passages. The service attaches a citation when the
+          generated words match a single passage.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

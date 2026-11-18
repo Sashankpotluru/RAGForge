@@ -1,0 +1,1376 @@
+{
+  "created_at": "2026-11-18T18:32:19.741048+00:00",
+  "dataset_id": "ragforge-original-fixture-v1",
+  "dataset_sha256": "ff67676492b462c093d30f450016047ea23700275f068dcf19de0b9953373149",
+  "dependencies": {
+    "fastapi": "0.164.0",
+    "pydantic": "2.14.3",
+    "qdrant-client": "1.20.0",
+    "ragforge": "0.1.0"
+  },
+  "git_commit": "a439f9028e4bea2ab95a322fc2d00f2f5b137de9",
+  "hardware": {
+    "concurrency": 1,
+    "machine": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "processor": "arm",
+    "python": "3.13.2"
+  },
+  "limitations": [
+    "12 synthetic cases, 6 documents; not a quality benchmark",
+    "Hash embeddings are token hashing, not semantic embeddings"
+  ],
+  "runs": [
+    {
+      "candidate_limit": 20,
+      "cases": [
+        {
+          "case_id": "keys",
+          "eligible_relevant_chunk_ids": [
+            "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
+          ],
+          "latency_ms": 0.9572500130161643,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "credentials",
+          "eligible_relevant_chunk_ids": [
+            "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
+          ],
+          "latency_ms": 0.5420410307124257,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "backup",
+          "eligible_relevant_chunk_ids": [
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.4837919259443879,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "restore",
+          "eligible_relevant_chunk_ids": [
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.46954199206084013,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "incident",
+          "eligible_relevant_chunk_ids": [
+            "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
+          ],
+          "latency_ms": 0.47320802696049213,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "review",
+          "eligible_relevant_chunk_ids": [
+            "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
+          ],
+          "latency_ms": 0.4617499653249979,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "travel",
+          "eligible_relevant_chunk_ids": [
+            "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387"
+          ],
+          "latency_ms": 0.46062504407018423,
+          "metrics": {
+            "hit_rate@1": 0.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 0.5,
+            "ndcg@10": 0.6309297535714575,
+            "novelty_ndcg@10": 0.6309297535714575,
+            "recall@1": 0.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "release",
+          "eligible_relevant_chunk_ids": [
+            "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f"
+          ],
+          "latency_ms": 0.45608310028910637,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "retention",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.4542090464383364,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "secrets",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.45833399053663015,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "security-filter",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.41179091203957796,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "multi-evidence",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.4598749801516533,
+          "metrics": {
+            "hit_rate@1": 0.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 0.5,
+            "ndcg@10": 0.6240505200038379,
+            "novelty_ndcg@10": 0.6240505200038379,
+            "recall@1": 0.0,
+            "recall@10": 1.0,
+            "recall@3": 0.5,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                1
+              ]
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        }
+      ],
+      "config_id": "c572911c7e2f0deea73c1988e3ad6a1d0caf1166e43c3d3348190ee3470042a3",
+      "failures": [],
+      "index_id": "f560b75bc19958f34d61df91cb8d77a0484c5ec69e3b5895913e10535b57c49c",
+      "latency_ms": {
+        "p50": 0.46062504407018423,
+        "p95": 0.9572500130161643
+      },
+      "metrics": {
+        "hit_rate@1": 0.8333333333333334,
+        "hit_rate@10": 1.0,
+        "hit_rate@3": 1.0,
+        "hit_rate@5": 1.0,
+        "mrr@10": 0.9166666666666666,
+        "ndcg@10": 0.9379150227979413,
+        "novelty_ndcg@10": 0.9379150227979413,
+        "recall@1": 0.8333333333333334,
+        "recall@10": 1.0,
+        "recall@3": 0.9583333333333334,
+        "recall@5": 1.0
+      },
+      "mode": "dense",
+      "result_limit": 10,
+      "rrf_k": 60,
+      "settings": {
+        "embedding_dimensions": 256,
+        "embedding_model": "hash-demo-v1",
+        "embedding_revision": null,
+        "overlap_chars": 120,
+        "qdrant_collection": "ragforge",
+        "request_timeout_seconds": 20.0,
+        "reranker_model": null,
+        "reranker_revision": null,
+        "target_chars": 800,
+        "url_allowed_hosts": [],
+        "url_ingestion_enabled": false
+      }
+    },
+    {
+      "candidate_limit": 20,
+      "cases": [
+        {
+          "case_id": "keys",
+          "eligible_relevant_chunk_ids": [
+            "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
+          ],
+          "latency_ms": 0.676083960570395,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "credentials",
+          "eligible_relevant_chunk_ids": [
+            "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8"
+          ],
+          "latency_ms": 0.5776670295745134,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "backup",
+          "eligible_relevant_chunk_ids": [
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.5492500495165586,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "restore",
+          "eligible_relevant_chunk_ids": [
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.5596249829977751,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "incident",
+          "eligible_relevant_chunk_ids": [
+            "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
+          ],
+          "latency_ms": 0.5612500244751573,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "review",
+          "eligible_relevant_chunk_ids": [
+            "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e"
+          ],
+          "latency_ms": 0.5472499178722501,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "travel",
+          "eligible_relevant_chunk_ids": [
+            "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387"
+          ],
+          "latency_ms": 0.5571660585701466,
+          "metrics": {
+            "hit_rate@1": 0.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 0.5,
+            "ndcg@10": 0.6309297535714575,
+            "novelty_ndcg@10": 0.6309297535714575,
+            "recall@1": 0.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "release",
+          "eligible_relevant_chunk_ids": [
+            "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f"
+          ],
+          "latency_ms": 0.5470829783007503,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "retention",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.5353749729692936,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "secrets",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.5490409675985575,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "security-filter",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62"
+          ],
+          "latency_ms": 0.4490000428631902,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "novelty_ndcg@10": 1.0,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        },
+        {
+          "case_id": "multi-evidence",
+          "eligible_relevant_chunk_ids": [
+            "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+            "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e"
+          ],
+          "latency_ms": 0.5600829608738422,
+          "metrics": {
+            "hit_rate@1": 1.0,
+            "hit_rate@10": 1.0,
+            "hit_rate@3": 1.0,
+            "hit_rate@5": 1.0,
+            "mrr@10": 1.0,
+            "ndcg@10": 0.9197207891481876,
+            "novelty_ndcg@10": 0.9197207891481876,
+            "recall@1": 0.5,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0
+          },
+          "ranks": [
+            {
+              "chunk_id": "ac0e85a4aae4804ba85516137c1bce017dd6dc6ec44d05a92e28827eb1f7697e",
+              "source": "fixture:backup",
+              "spans": [
+                0
+              ]
+            },
+            {
+              "chunk_id": "ef6da983147aaecf7007a30622d411206832f004d1e3d328cb33159ea4562387",
+              "source": "fixture:travel",
+              "spans": []
+            },
+            {
+              "chunk_id": "9dc72e31e3e6df63b74f6d3628c2e54f6f6eac534bf885b4e8a7a941107f1c62",
+              "source": "fixture:retention",
+              "spans": [
+                1
+              ]
+            },
+            {
+              "chunk_id": "10ff60f5839aa0b9a48f076bdf4795c633bad3dc71b294fa8e9e5af945fc935e",
+              "source": "fixture:incident",
+              "spans": []
+            },
+            {
+              "chunk_id": "b8607563015f7aff9e499baa124377058339d5928f9871bd900984776d201b8f",
+              "source": "fixture:release",
+              "spans": []
+            },
+            {
+              "chunk_id": "3d857184915a48d61e10ccceb0932c17bb9495794bad768700654b78b8a4eca8",
+              "source": "fixture:security",
+              "spans": []
+            }
+          ]
+        }
+      ],
+      "config_id": "c572911c7e2f0deea73c1988e3ad6a1d0caf1166e43c3d3348190ee3470042a3",
+      "failures": [],
+      "index_id": "f560b75bc19958f34d61df91cb8d77a0484c5ec69e3b5895913e10535b57c49c",
+      "latency_ms": {
+        "p50": 0.5492500495165586,
+        "p95": 0.676083960570395
+      },
+      "metrics": {
+        "hit_rate@1": 0.9166666666666666,
+        "hit_rate@10": 1.0,
+        "hit_rate@3": 1.0,
+        "hit_rate@5": 1.0,
+        "mrr@10": 0.9583333333333334,
+        "ndcg@10": 0.9625542118933037,
+        "novelty_ndcg@10": 0.9625542118933037,
+        "recall@1": 0.875,
+        "recall@10": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0
+      },
+      "mode": "hybrid",
+      "result_limit": 10,
+      "rrf_k": 60,
+      "settings": {
+        "embedding_dimensions": 256,
+        "embedding_model": "hash-demo-v1",
+        "embedding_revision": null,
+        "overlap_chars": 120,
+        "qdrant_collection": "ragforge",
+        "request_timeout_seconds": 20.0,
+        "reranker_model": null,
+        "reranker_revision": null,
+        "target_chars": 800,
+        "url_allowed_hosts": [],
+        "url_ingestion_enabled": false
+      }
+    }
+  ],
+  "source": {
+    "commit": "a439f9028e4bea2ab95a322fc2d00f2f5b137de9",
+    "dirty": true,
+    "kind": "git-checkout",
+    "version": "0.1.0"
+  },
+  "timing_boundary": "search through citation construction, excluding validation, model load, ingestion and generation"
+}

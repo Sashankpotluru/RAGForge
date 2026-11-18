@@ -1,0 +1,114 @@
+{
+  "created_at": "2026-11-18T19:19:34.722804+00:00",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "device": "Apple Silicon MPS",
+  "warmup": "Three sequential requests to a shared live process; warmup state was uncontrolled.",
+  "samples": [
+    {
+      "question": "How often do database backups run?",
+      "mode": "hybrid_rerank",
+      "answer": "Database backups run every six hours. [C1]",
+      "failure": null,
+      "search_ms": 37.0,
+      "generation_ms": 324.89,
+      "evidence": [
+        {
+          "id": "C1",
+          "source": "fixture:backup",
+          "quote": "Database backups run every six hours. Backup retention is thirty days. Restore drills occur on the first Monday of each month."
+        },
+        {
+          "id": "C2",
+          "source": "fixture:release",
+          "quote": "Every release requires a green test suite and approval from the service owner. Roll back a release when the error budget threshold is exceeded. Keep the previous image tag for recovery."
+        },
+        {
+          "id": "C3",
+          "source": "fixture:travel",
+          "quote": "Travel expenses must be submitted within fourteen days. Attach receipts for lodging and transport. The finance team reviews reimbursement requests on Fridays."
+        },
+        {
+          "id": "C4",
+          "source": "fixture:retention",
+          "quote": "Application logs are retained for seven days. Audit logs are retained for one year. Never record passwords or access tokens in logs."
+        },
+        {
+          "id": "C5",
+          "source": "fixture:security",
+          "quote": "Production access requires hardware security keys. Temporary credentials expire after four hours. Report lost keys to the security team immediately."
+        }
+      ]
+    },
+    {
+      "question": "When do temporary credentials expire?",
+      "mode": "hybrid_rerank",
+      "answer": "Four hours [C1]",
+      "failure": null,
+      "search_ms": 11.22,
+      "generation_ms": 76.91,
+      "evidence": [
+        {
+          "id": "C1",
+          "source": "fixture:security",
+          "quote": "Production access requires hardware security keys. Temporary credentials expire after four hours. Report lost keys to the security team immediately."
+        },
+        {
+          "id": "C2",
+          "source": "fixture:backup",
+          "quote": "Database backups run every six hours. Backup retention is thirty days. Restore drills occur on the first Monday of each month."
+        },
+        {
+          "id": "C3",
+          "source": "fixture:travel",
+          "quote": "Travel expenses must be submitted within fourteen days. Attach receipts for lodging and transport. The finance team reviews reimbursement requests on Fridays."
+        },
+        {
+          "id": "C4",
+          "source": "fixture:release",
+          "quote": "Every release requires a green test suite and approval from the service owner. Roll back a release when the error budget threshold is exceeded. Keep the previous image tag for recovery."
+        },
+        {
+          "id": "C5",
+          "source": "fixture:incident",
+          "quote": "For a production incident, page the on-call engineer. The incident commander records decisions in the incident log. Publish a review within five business days."
+        }
+      ]
+    },
+    {
+      "question": "How long are audit logs retained?",
+      "mode": "hybrid_rerank",
+      "answer": "One year [C1]",
+      "failure": null,
+      "search_ms": 10.24,
+      "generation_ms": 76.44,
+      "evidence": [
+        {
+          "id": "C1",
+          "source": "fixture:retention",
+          "quote": "Application logs are retained for seven days. Audit logs are retained for one year. Never record passwords or access tokens in logs."
+        },
+        {
+          "id": "C2",
+          "source": "fixture:incident",
+          "quote": "For a production incident, page the on-call engineer. The incident commander records decisions in the incident log. Publish a review within five business days."
+        },
+        {
+          "id": "C3",
+          "source": "fixture:backup",
+          "quote": "Database backups run every six hours. Backup retention is thirty days. Restore drills occur on the first Monday of each month."
+        },
+        {
+          "id": "C4",
+          "source": "fixture:travel",
+          "quote": "Travel expenses must be submitted within fourteen days. Attach receipts for lodging and transport. The finance team reviews reimbursement requests on Fridays."
+        },
+        {
+          "id": "C5",
+          "source": "fixture:security",
+          "quote": "Production access requires hardware security keys. Temporary credentials expire after four hours. Report lost keys to the security team immediately."
+        }
+      ]
+    }
+  ]
+}

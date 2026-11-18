@@ -1,0 +1,26 @@
+{
+  "dataset_id": "ragforge-original-fixture-v1",
+  "license": "CC0-1.0; original synthetic text created for RAGForge, not real policy",
+  "documents": [
+    {"source": "fixture:security", "external_id": "security", "title": "Access policy", "content": "Production access requires hardware security keys. Temporary credentials expire after four hours. Report lost keys to the security team immediately.", "metadata": {"team": "security"}},
+    {"source": "fixture:backup", "external_id": "backup", "title": "Backup operations", "content": "Database backups run every six hours. Backup retention is thirty days. Restore drills occur on the first Monday of each month.", "metadata": {"team": "operations"}},
+    {"source": "fixture:incident", "external_id": "incident", "title": "Incident response", "content": "For a production incident, page the on-call engineer. The incident commander records decisions in the incident log. Publish a review within five business days.", "metadata": {"team": "operations"}},
+    {"source": "fixture:travel", "external_id": "travel", "title": "Travel expenses", "content": "Travel expenses must be submitted within fourteen days. Attach receipts for lodging and transport. The finance team reviews reimbursement requests on Fridays.", "metadata": {"team": "finance"}},
+    {"source": "fixture:release", "external_id": "release", "title": "Release process", "content": "Every release requires a green test suite and approval from the service owner. Roll back a release when the error budget threshold is exceeded. Keep the previous image tag for recovery.", "metadata": {"team": "operations"}},
+    {"source": "fixture:retention", "external_id": "retention", "title": "Log retention", "content": "Application logs are retained for seven days. Audit logs are retained for one year. Never record passwords or access tokens in logs.", "metadata": {"team": "security"}}
+  ],
+  "cases": [
+    {"id": "keys", "question": "What protects production access?", "spans": [{"source": "fixture:security", "source_location": "fixture:security", "start": 0, "end": 49}]},
+    {"id": "credentials", "question": "When do temporary credentials expire?", "spans": [{"source": "fixture:security", "source_location": "fixture:security", "start": 50, "end": 96}]},
+    {"id": "backup", "question": "How often do database backups run?", "spans": [{"source": "fixture:backup", "source_location": "fixture:backup", "start": 0, "end": 36}]},
+    {"id": "restore", "question": "When are restore drills scheduled?", "spans": [{"source": "fixture:backup", "source_location": "fixture:backup", "start": 70, "end": 123}]},
+    {"id": "incident", "question": "Who should be paged for a production incident?", "spans": [{"source": "fixture:incident", "source_location": "fixture:incident", "start": 0, "end": 51}]},
+    {"id": "review", "question": "How soon is an incident review published?", "spans": [{"source": "fixture:incident", "source_location": "fixture:incident", "start": 113, "end": 156}]},
+    {"id": "travel", "question": "What is the deadline for travel expense submission?", "spans": [{"source": "fixture:travel", "source_location": "fixture:travel", "start": 0, "end": 54}]},
+    {"id": "release", "question": "What approvals and tests are needed for a release?", "spans": [{"source": "fixture:release", "source_location": "fixture:release", "start": 0, "end": 76}]},
+    {"id": "retention", "question": "How long are application logs retained?", "spans": [{"source": "fixture:retention", "source_location": "fixture:retention", "start": 0, "end": 43}]},
+    {"id": "secrets", "question": "What must never be recorded in logs?", "spans": [{"source": "fixture:retention", "source_location": "fixture:retention", "start": 82, "end": 129}]},
+    {"id": "security-filter", "question": "What is retained for one year?", "metadata_filter": {"conditions": [{"field": "team", "operator": "eq", "value": "security"}]}, "spans": [{"source": "fixture:retention", "source_location": "fixture:retention", "start": 44, "end": 81}]},
+    {"id": "multi-evidence", "question": "What are the backup retention and audit log retention periods?", "spans": [{"source": "fixture:backup", "source_location": "fixture:backup", "start": 37, "end": 69}, {"source": "fixture:retention", "source_location": "fixture:retention", "start": 44, "end": 81}]}
+  ]
+}
