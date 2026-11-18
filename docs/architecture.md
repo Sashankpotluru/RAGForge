@@ -6,12 +6,16 @@ in the same GitHub repository. The website does not depend on the Python service
 
 ## Deployment diagram
 
-![GitHub Pages deployment, browser retrieval and generation, and the separate Python backend](architecture-1.png)
+![GitHub Pages deployment, browser retrieval and generation, and the separate Python backend](architecture-pages.png)
 
 GitHub Actions tests the code, builds an allowlisted static artifact, and deploys
 that artifact to GitHub Pages. The visitor's browser loads the workbench and six
 synthetic policies. Keyword search is ready immediately; neural retrieval and
 answer generation download their models only when requested.
+
+The sample policies are Access policy, Backup operations, Incident response,
+Travel expenses, Release process, and Log retention. They are original synthetic
+documents bundled with the project.
 
 ## Current public hosting
 
@@ -83,7 +87,7 @@ the reranked configuration also reranks the fused candidates.
 
 </details>
 
-The [PNG](architecture-1.png) is the presentation diagram used in the README and
+The [PNG](architecture-pages.png) is the presentation diagram used in the README and
 website. The Mermaid references provide editable descriptions of the deployment
 and backend paths.
 

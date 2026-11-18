@@ -113,7 +113,7 @@ These measurements describe the Python backend, not the browser's ONNX models.
 
 ## Architecture
 
-![RAGForge architecture: GitHub Actions deploys to GitHub Pages; retrieval and optional generation run in the visitor's browser, with the Python backend available separately](docs/architecture-1.png)
+![RAGForge architecture: GitHub Actions deploys to GitHub Pages; retrieval and optional generation run in the visitor's browser, with the Python backend available separately](docs/architecture-pages.png)
 
 GitHub Actions builds the website and publishes it to GitHub Pages. Retrieval and
 optional model inference run in the visitor's browser. The full Python backend

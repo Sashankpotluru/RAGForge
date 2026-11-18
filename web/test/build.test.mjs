@@ -14,7 +14,7 @@ test("a clean Pages artifact contains only its public allowlist, including after
   await buildSite(site);
   const files = (await readdir(site, { recursive: true })).sort();
   assert.deepEqual(files, [
-    "assets", "assets/architecture.png", "assets/browser.mjs", "assets/inference.mjs",
+    "assets", "assets/architecture-pages.png", "assets/browser.mjs", "assets/inference.mjs",
     "assets/retrieval.mjs", "assets/workbench.css", "assets/workbench.js", "assets/worker-client.mjs",
     "corpus.json", "index.html", "results.json",
   ].sort());

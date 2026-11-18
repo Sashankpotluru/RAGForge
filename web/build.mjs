@@ -11,7 +11,7 @@ export async function buildSite(output = join(root, "dist/RAGForge")) {
   try {
     const assets = join(staging, "assets");
     await mkdir(assets);
-    for (const name of ["workbench.js", "workbench.css", "architecture.png"]) {
+    for (const name of ["workbench.js", "workbench.css", "architecture-pages.png"]) {
       await copyFile(join(demo, "static", name), join(assets, name));
     }
     for (const name of ["retrieval.mjs", "worker-client.mjs", "browser.mjs", "inference.mjs"]) {
