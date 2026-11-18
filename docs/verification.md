@@ -131,6 +131,21 @@ Canceling generation restored the controls, and the next search succeeded.
 Desktop and 390px layouts showed no horizontal page overflow. Corpus, recorded
 results, citation navigation and the supplied architecture image were checked.
 
+The release was then published to
+[GitHub Pages](https://sashankpotluru.github.io/RAGForge/).
+[Deployment run 44386524662](https://github.com/Sashankpotluru/RAGForge/actions/runs/44386524662)
+passed for commit `c69ae47`.
+[CI run 44386524707](https://github.com/Sashankpotluru/RAGForge/actions/runs/44386524707)
+passed all nine browser tests, 73 Python tests and three additional live
+Docker Compose/Qdrant integration tests. The Python run emitted the upstream
+Starlette TestClient deprecation warning described above.
+
+The public page completed real hybrid retrieval, cross-encoder reranking and
+Flan-T5 generation, returning “every six hours [C1]” for the backup-frequency
+question. The old tunnel, Python demo and local static preview were shut down.
+The GitHub Pages site remained available. The repository homepage now points to
+this stable URL; no request depends on a service running on the maintainer's Mac.
+
 ## Review and boundaries
 
 Independent review identified failure cases in initialization, deletion, cache
