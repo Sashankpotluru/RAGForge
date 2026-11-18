@@ -39,7 +39,7 @@ function interval(values, samples) {
   return { mean: mean(values), ci95: [percentile(means, 0.025), percentile(means, 0.975)] };
 }
 
-export function summarize(queries, expectedIds, documentCount) {
+export function summarize(queries, expectedIds, documentCount, datasetName = "SciFact") {
   const seen = new Set(queries.map(q => q.id));
   if (queries.length !== expectedIds.length || seen.size !== queries.length || expectedIds.some(id => !seen.has(id))) {
     throw Error("Missing or duplicate evaluation queries.");
@@ -59,5 +59,5 @@ export function summarize(queries, expectedIds, documentCount) {
       examples: { largest_loss: examples.find(row => row.delta < 0) ?? null,
         largest_gain: examples.filter(row => row.delta > 0).sort((a, b) => b.delta - a.delta || Number(a.id) - Number(b.id))[0] ?? null } };
   });
-  return { dataset: "BEIR SciFact", documents: documentCount, queries: queries.length, runs };
+  return { dataset: "BEIR " + datasetName, documents: documentCount, queries: queries.length, runs };
 }

@@ -67,3 +67,14 @@ test("validates model, binary length, checksums, membership and row order", asyn
     await assert.rejects(validateVectors(binary, { ...manifest, ...changed }));
   }
 });
+
+test("only exact query/document exceptions survive missing-qrel validation and count against recall", () => {
+  const header = "query-id\tcorpus-id\tscore\n";
+  const parse = (line, pairs) => parseQrels(header + line, new Set(["a", "b"]), new Set(["z"]), pairs);
+  const judgments = parse("a\tx\t1", [["a", "x"]]).get("a");
+  assert.equal(judgments.get("x"), 1);
+  assert.equal(queryMetrics(["z"], judgments)["recall@100"], 0);
+  assert.throws(() => parse("b\tx\t1", [["a", "x"]]));
+  assert.throws(() => parse("a\ty\t1", [["a", "x"]]));
+  assert.throws(() => parse("a\tz\t1", [["a", "x"]]));
+});

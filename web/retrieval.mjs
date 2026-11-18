@@ -5,9 +5,9 @@ function terms(text) {
   return (text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []).filter(word => !stopWords.has(word));
 }
 
-export function validateQuery(raw) {
+export function validateQuery(raw, maxChars = 500) {
   const query = raw.trim();
-  if (!query || [...query].length > 500) throw Error("Enter a search query of 1–500 characters.");
+  if (!query || [...query].length > maxChars) throw Error("Enter a search query of 1–" + maxChars + " characters.");
   return query;
 }
 
@@ -32,13 +32,14 @@ export function createIndex(documents) {
 
 function byScore(a, b) { return b.score - a.score || a.row - b.row; }
 
-function keyword(index, query) {
+function keyword(index, query, excludedId) {
   const scores = new Map();
   for (const term of new Set(terms(query))) {
     const posting = index.postings.get(term);
     if (!posting) continue;
     const idf = Math.log1p((index.documents.length - posting.length + 0.5) / (posting.length + 0.5));
     for (const [row, count] of posting) {
+      if (index.documents[row].id === excludedId) continue;
       const gain = idf * count * (protocol.bm25.k1 + 1) / (count + index.normalizers[row]);
       scores.set(row, (scores.get(row) ?? 0) + gain);
     }
@@ -73,14 +74,14 @@ export function dotScores(vectors, query) {
   return scores;
 }
 
-export async function rank(index, raw, mode, models) {
-  const query = validateQuery(raw);
-  if (mode === "bm25") return keyword(index, query);
+export async function rank(index, raw, mode, models, { excludeDocumentId, maxQueryChars } = {}) {
+  const query = validateQuery(raw, maxQueryChars);
+  if (mode === "bm25") return keyword(index, query, excludeDocumentId);
   if (!protocol.modes.includes(mode)) throw Error("Unknown retrieval mode.");
   const dense = checkedScores(await models.dense(query), index.documents.length)
-    .sort(byScore).slice(0, protocol.candidateDepth);
+    .filter(hit => index.documents[hit.row].id !== excludeDocumentId).sort(byScore).slice(0, protocol.candidateDepth);
   if (mode === "dense") return dense;
-  const hybrid = fusion([dense.map(r => r.row), keyword(index, query).map(r => r.row)]);
+  const hybrid = fusion([dense.map(r => r.row), keyword(index, query, excludeDocumentId).map(r => r.row)]);
   if (mode === "hybrid") return hybrid;
   const head = hybrid.slice(0, protocol.rerankDepth);
   const scores = await models.rerank(query, head.map(hit => index.documents[hit.row]));

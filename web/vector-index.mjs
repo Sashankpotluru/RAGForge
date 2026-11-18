@@ -4,11 +4,11 @@ export async function sha256(bytes) {
   const value = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(value), n => n.toString(16).padStart(2, "0")).join("");
 }
-export async function validateCorpus(corpusBytes, manifest) {
+export async function validateCorpus(corpusBytes, manifest, expectedVersion = protocol.version) {
   if (await sha256(corpusBytes) !== manifest.corpus_sha256) throw Error("Corpus checksum mismatch. Reload the workspace.");
   const corpus = JSON.parse(new TextDecoder().decode(corpusBytes));
   const ids = corpus.documents.map(doc => doc.id);
-  if (manifest.version !== protocol.version || manifest.rows !== ids.length || new Set(ids).size !== ids.length ||
+  if (manifest.version !== expectedVersion || manifest.rows !== ids.length || new Set(ids).size !== ids.length ||
       await sha256(new TextEncoder().encode(ids.join("\n"))) !== manifest.row_ids_sha256) {
     throw Error("Document ID order differs from the vector index.");
   }

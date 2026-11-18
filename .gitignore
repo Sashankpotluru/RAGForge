@@ -12,4 +12,5 @@ dist/
 /results/
 
 data/scifact/
+data/arguana/
 node_modules/

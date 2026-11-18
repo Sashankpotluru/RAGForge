@@ -90,3 +90,19 @@ test("failures in the requested model propagate without changing mode", async ()
   for (const scores of [[0.9], [1, NaN, 0]]) await assert.rejects(rank(index, "backups", "dense", { dense: () => scores }));
   await assert.rejects(rank(index, "backups", "unknown"));
 });
+
+test("each method removes the self-ID before the top-100 cutoff and reranking", async () => {
+  const documents = Array.from({ length: 101 }, (_, i) => ({ id: "d" + i, title: "topic", content: "" }));
+  const index = createIndex(documents);
+  const models = { dense: () => documents.map(() => 1), rerank: (_query, head) => {
+    assert.equal(head.length, 50);
+    assert.ok(head.every(doc => doc.id !== "d0"));
+    return head.map(() => 1);
+  } };
+  const longQuery = "topic ".repeat(100);
+  for (const mode of ["bm25", "dense", "hybrid", "hybrid_rerank"]) {
+    const hits = await rank(index, longQuery, mode, models, { excludeDocumentId: "d0", maxQueryChars: 5500 });
+    assert.deepEqual(hits.map(hit => hit.row), Array.from({ length: 100 }, (_, i) => i + 1));
+  }
+  await assert.rejects(rank(index, longQuery, "bm25", models), /500/);
+});

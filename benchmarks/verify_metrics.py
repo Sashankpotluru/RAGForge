@@ -1,4 +1,4 @@
-"""Audit saved SciFact ranks against trec_eval, without running the models.
+"""Audit saved BEIR ranks against trec_eval, without running the models.
 
 Install pytrec-eval-terrier==0.5.11 in a separate environment. Run from the
 repository root after `npm run prepare --prefix benchmarks`.
@@ -19,7 +19,7 @@ import pytrec_eval
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--report", type=Path, default=Path("evaluations/results/scifact-v1.json"))
+    parser.add_argument("--report", type=Path, default=Path("evaluations/results/scifact-v2.json"))
     parser.add_argument("--qrels", type=Path, default=Path("data/scifact/qrels/test.tsv"))
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -34,8 +34,8 @@ def main() -> None:
     for row in csv.DictReader(qrels_bytes.decode().splitlines(), delimiter="\t"):
         qrels.setdefault(row["query-id"], {})[row["corpus-id"]] = int(row["score"])
     queries = report["queries"]
-    if len(queries) != 300 or {q["id"] for q in queries} != set(qrels):
-        raise ValueError("Expected every official SciFact test query exactly once")
+    if len(queries) != len(qrels) or {q["id"] for q in queries} != set(qrels):
+        raise ValueError("Expected every official test query exactly once")
     for query in queries:
         if query["judgments"] != qrels[query["id"]]:
             raise ValueError(f"Judgment mismatch for query {query['id']}")
@@ -54,6 +54,8 @@ def main() -> None:
         run: dict[str, dict[str, float]] = {}
         for query in queries:
             ids = [doc_id for doc_id, _ in query["modes"][mode]["ranked"]]
+            if report["protocol"]["dataset"].get("excludeSelf") and query["id"] in ids:
+                raise ValueError(f"Self match for {query['id']}/{mode}")
             if len(ids) != len(set(ids)):
                 raise ValueError(f"Duplicate ranked document for {query['id']}/{mode}")
             # Tuple order is the saved ranking. Reranked logits and the RRF tail
