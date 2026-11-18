@@ -2,14 +2,49 @@
 
 [![CI](https://github.com/Sashankpotluru/RAGForge/actions/workflows/ci.yml/badge.svg)](https://github.com/Sashankpotluru/RAGForge/actions/workflows/ci.yml)
 
-A single-worker hybrid retrieval service for local document collections. Ingest PDF, Markdown, HTML, text or allowlisted HTTPS sources. Search returns ranked chunks, source locations, quotes, and the rank contributed by each retrieval branch. Optional models add semantic retrieval, cross-encoder reranking, query rewriting and cited answers.
+RAGForge searches documents, retrieves useful passages, and ties answers back to
+their sources. It combines vector search with BM25, merges their rankings, and
+can rerank the results before passing evidence to a language model.
 
-## Public sample workbench
+This repository contains the full Python backend and a browser demo. Document
+ingestion, versioning, persistence, and evaluation live in the backend. The demo
+gives you a quick way to try retrieval without installing anything.
 
-[Open the live demo](https://apt-generated-arbitrary-features.trycloudflare.com)
-— a temporary session hosted on the maintainer's Mac. The link works while the
-host and tunnel are running; it can expire or change on restart. The repository
-and local setup below remain available independently.
+## Try it
+
+**[Open the demo](https://sashankpotluru.github.io/RAGForge/)**
+
+Ask **“How often do database backups run?”** The sample document says backups run
+every six hours. Inspect the retrieved passage and follow the answer's citation
+back to its source.
+
+The hosted demo runs on GitHub Pages. Search happens in your browser, so it works
+when the maintainer's computer is off. Keyword search is ready immediately.
+Neural search and model answers are optional: the page explains the download
+before loading weights onto your device. No account or API key is needed.
+
+The six sample documents are fictional policies written for this project. The
+page doesn't upload documents or connect to a private index. Model answers require
+a supported browser and enough memory; keyword search works without loading a
+model. [Browser setup and limitations](docs/browser-demo.md)
+
+## What's in the backend
+
+- **Document ingestion:** PDF, Markdown, HTML and plain text, with bounded chunks
+  and source offsets. HTTPS ingestion is optional and restricted to allowed hosts.
+- **Hybrid retrieval:** dense vectors in Qdrant, a persisted BM25 index, reciprocal
+  rank fusion, and an optional cross-encoder reranker.
+- **Document lifecycle:** SQLite tracks active versions. Repeated ingestion is a
+  no-op, replacements are staged, and failed updates can be recovered.
+- **Cited answers:** quotes and identifiers travel with retrieval results. A
+  configured chat-completions provider can answer questions or rewrite queries.
+- **Evaluation:** versioned fixtures, separate baselines, per-question results,
+  model revisions, and clearly defined timing boundaries.
+
+The code uses explicit components so each ranking stage and failure path can be
+inspected. [Implementation decisions](docs/implementation-notes.md)
+
+## Run the sample UI locally
 
 Run the browser demo locally with an empty dedicated storage directory. Its six synthetic documents are bundled with the application.
 
@@ -18,9 +53,10 @@ uv sync --locked
 uv run --no-sync ragforge demo --data-dir data/public-demo --port 8787
 ```
 
-Open [the workbench](http://127.0.0.1:8787). For neural retrieval, free local answer generation, and a temporary public link, follow the [demo guide](docs/demo.md).
+Open [the workbench](http://127.0.0.1:8787). The [local demo guide](docs/demo.md)
+covers neural retrieval and running Qwen on your own machine.
 
-## Run locally
+## Run the backend
 
 Use Python 3.12 or 3.13 and uv 0.13.9. Run from the repository root.
 
@@ -42,7 +78,7 @@ curl -sS http://127.0.0.1:8000/v1/search -H 'Content-Type: application/json' \
   -d '{"query":"flowers","collection":"default","mode":"hybrid","metadata_filter":{"conditions":[{"field":"team","operator":"eq","value":"garden"}]}}'
 ```
 
-## Interfaces
+## API reference
 
 | Interface | Behavior |
 |---|---|
@@ -56,9 +92,10 @@ curl -sS http://127.0.0.1:8000/v1/search -H 'Content-Type: application/json' \
 
 Use `ragforge --help` for CLI commands. Configure retrieval models and optional providers through the environment. [Operations runbook](docs/runbook.md)
 
-## Evaluation and operations
+## What the evaluation shows
 
-The checked-in evaluation uses six original synthetic documents and twelve labeled questions. It exercises both offline retrieval and real, revision-pinned tiny models. The metrics describe this fixture only. [Methods and measurements](docs/evaluation.md)
+The Python backend was tested on twelve labeled questions across six sample
+documents. These runs used pinned tiny neural models:
 
 | Neural retrieval | Hit rate@1 | MRR@10 | Recall@1 |
 | --- | ---: | ---: | ---: |
@@ -66,11 +103,44 @@ The checked-in evaluation uses six original synthetic documents and twelve label
 | Hybrid | 91.7% | 0.958 | 87.5% |
 | Hybrid + cross-encoder | 100.0% | 1.000 | 95.8% |
 
-These are fixture results, not estimates of performance on a general document
-collection. Three [local generation examples](evaluations/results/local-generation-v1.json)
-also record the actual answers, matching evidence, pinned model and timings.
+Reranking found a relevant first passage for every question in this fixture. That
+doesn't establish the same result on a larger or unfamiliar collection. The
+[evaluation notes](docs/evaluation.md) explain the labels, metrics and limits;
+the [raw results](evaluations/results) include per-question evidence and timings.
+These measurements describe the Python backend, not the browser's ONNX models.
+
+## Architecture
 
 ![System architecture](docs/architecture-1.png)
+
+This diagram shows the backend and the original tunnel-based demo. Its “Mac must
+stay running” label applies to that older deployment. The current GitHub Pages
+demo runs in the visitor's browser. [Current hosting topology](docs/architecture.md)
+
+## Tests and containers
+
+```bash
+uv run --no-sync pytest
+uv run --no-sync ruff check .
+uv run --no-sync ruff format --check .
+uv run --no-sync mypy src
+docker compose up --build -d
+```
+
+CI runs the Python tests, type checks, fixture evaluation, and integration checks
+against Docker Compose and Qdrant. The browser demo has separate ranking tests and
+static build checks. [Verification record](docs/verification.md)
+
+## Project layout
+
+| Path | Contents |
+| --- | --- |
+| `src/ragforge/` | Python ingestion, storage, retrieval, generation and API |
+| `src/ragforge/demo/` | Shared workbench UI and isolated Python demo |
+| `web/` | Browser retrieval, model runtime, tests and Pages build |
+| `tests/` | Python unit, contract and integration tests |
+| `evaluations/results/` | Recorded measurements and provenance |
+| `docs/` | Design decisions, setup, operations and limitations |
 
 [Architecture diagram](docs/architecture.md) · [Verification](docs/verification.md) · [Security and trust boundaries](docs/security.md) · [Implementation decisions](docs/implementation-notes.md)
 
