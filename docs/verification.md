@@ -28,6 +28,16 @@ hashes, timings, bootstrap intervals and both gains and regressions.
   no neural model/runtime/vector request. A real Flan-T5 run without a unique
   phrase match correctly withheld its generated answer and kept the evidence.
 
+[CI run 44394079909](https://github.com/Sashankpotluru/RAGForge/actions/runs/44394079909)
+passed for release commit `982657c`: 13 browser tests, 73 Python tests with two
+opt-in skips, and three additional live Docker Compose/Qdrant integration tests.
+The Python run retained the upstream Starlette deprecation warning described
+below. [Pages deployment 44394080071](https://github.com/Sashankpotluru/RAGForge/actions/runs/44394080071)
+also passed. The hosted corpus, manifest, vectors, aggregate results and diagram
+returned HTTP 200 and matched the committed bytes exactly. The public website
+completed actual hybrid reranking and BM25 searches over SciFact; its Results
+view displayed the recorded benchmark and its Architecture view the new diagram.
+
 The sections below retain the earlier backend and six-policy release checks;
 their fixture results do not describe SciFact retrieval quality.
 
