@@ -19,7 +19,17 @@ Run these commands from the repository root after the locked development setup:
 
 The default test run skips the explicitly enabled remote-Qdrant and running-Compose
 tests. Embedded Qdrant tests run in the default suite. The separate native-server
-run below covers remote Qdrant; Docker remains unverified locally.
+run below covers remote Qdrant. Docker was then verified on GitHub's Linux runner.
+
+## Hosted container verification
+
+[GitHub Actions run 44380235610](https://github.com/Sashankpotluru/RAGForge/actions/runs/44380235610)
+passed on the clean public release. The run installed the locked dependencies,
+passed formatting, lint and typing, ran **73 tests with two opt-in skips**, and
+executed the fixture evaluator. It then built the non-root API image, started
+Docker Compose with Qdrant v1.20.0, and passed **all three integration tests**,
+including live ingestion, cited retrieval, cleanup, and a remote vector round trip.
+Compose was shut down and its test volumes removed afterward.
 
 ## End-to-end checks
 
@@ -85,6 +95,13 @@ sample index, rejection of existing storage, independence from private backend
 configuration, body limits, globally shared rate limits, and concurrent-generation
 rejection. [Demo operation and limits](demo.md)
 
+The [public HTTPS session](https://apt-generated-arbitrary-features.trycloudflare.com)
+was checked on 2026-11-18: page, health, corpus, results and diagram returned 200;
+real local generation returned cited evidence; administration routes returned 404,
+unknown query fields 422, oversized bodies 413, and path traversal 404. The browser
+also completed generation and followed its citation to the matching passage.
+This is a temporary tunnel to the read-only demo, not permanent managed hosting.
+
 ## Review and boundaries
 
 Independent review identified failure cases in initialization, deletion, cache
@@ -98,7 +115,7 @@ RAGForge is implemented.
 
 Not verified or delivered in this release:
 
-- Docker/Compose execution on this Mac, and a dispatched GitHub Actions run.
+- Docker/Compose execution on this Mac (covered instead by the hosted Linux run).
 - Hosted LLM compatibility or answer entailment using a real provider.
 - Production load, multi-worker consistency, tenant authorization, or general
   retrieval improvement on an independent real-world benchmark.

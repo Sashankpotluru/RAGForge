@@ -6,6 +6,11 @@ A single-worker hybrid retrieval service for local document collections. Ingest 
 
 ## Public sample workbench
 
+[Open the live demo](https://apt-generated-arbitrary-features.trycloudflare.com)
+— a temporary session hosted on the maintainer's Mac. The link works while the
+host and tunnel are running; it can expire or change on restart. The repository
+and local setup below remain available independently.
+
 Run the browser demo locally with an empty dedicated storage directory. Its six synthetic documents are bundled with the application.
 
 ```bash
