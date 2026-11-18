@@ -6,24 +6,33 @@ in the same GitHub repository. The website does not depend on the Python service
 
 ## Deployment diagram
 
-![GitHub Pages deployment, browser retrieval and generation, and the separate Python backend](architecture-pages.png)
+![SciFact preparation and evaluation feed the GitHub Pages workbench; the Python backend runs separately](architecture-scifact.png)
 
 GitHub Actions tests the code, builds an allowlisted static artifact, and deploys
-that artifact to GitHub Pages. The visitor's browser loads the workbench and six
-synthetic policies. Keyword search is ready immediately; neural retrieval and
+that artifact to GitHub Pages. The browser loads the workbench and all 5,183
+SciFact abstracts. Keyword search uses the loaded corpus; neural retrieval and
 answer generation download their models only when requested.
 
-The sample policies are Access policy, Backup operations, Incident response,
-Travel expenses, Release process, and Log retention. They are original synthetic
-documents bundled with the project.
+Preparation computes a pinned MiniLM document index once. A separate offline
+runner scores the shared retrieval code on all 300 official test queries and
+publishes rankings, metrics, confidence intervals and provenance. Test judgments
+are not deployed to the browser. The original six-policy fixture remains with
+the separate Python sample app.
 
 ## Current public hosting
 
 ```mermaid
 flowchart LR
-    repo["GitHub repository<br/>backend + browser source"] --> ci["GitHub Actions<br/>test + static build"]
-    ci --> pages["GitHub Pages<br/>HTML, CSS, JS + sample data"]
-    pages --> browser["Visitor's browser<br/>keyword / neural retrieval"]
+    data["BEIR SciFact<br/>5,183 abstracts"] --> prep["Pinned MiniLM index preparation"]
+    prep --> repo["GitHub repository<br/>source + corpus + vectors"]
+    data --> eval["Shared retrieval benchmark<br/>BM25 / dense / hybrid / reranked"]
+    prep --> eval
+    labels["300 test queries + qrels"] --> eval
+    eval --> results["Versioned metrics + intervals"]
+    repo --> ci["GitHub Actions<br/>test + static build"]
+    results --> ci
+    ci --> pages["GitHub Pages<br/>interface, corpus, vectors + summary"]
+    pages --> browser["Retrieval worker<br/>BM25 / MiniLM / RRF / rerank"]
     models["Pinned public ONNX weights"] -->|optional download| browser
     browser --> evidence["Ranked passages + citations"]
     evidence --> model["Optional Flan-T5 generation<br/>WebAssembly worker"]
@@ -31,14 +40,16 @@ flowchart LR
 ```
 
 GitHub Pages serves static files; it does not run FastAPI, SQLite, Qdrant, or a
-Python model server. The browser edition searches the packaged sample corpus in
+Python model server. The browser edition searches the packaged SciFact corpus in
 memory. Its model downloads come from public model repositories, while questions
-and retrieved context stay in the browser. The public URL has no dependency on
-the maintainer's computer or the former tunnel.
+and retrieved context stay in the browser. Corpus and vector hashes are checked
+before neural search. Precomputed vectors avoid embedding thousands of abstracts
+on each visit; the browser embeds only the query.
 
 The browser and Python implementations have separate model configurations. The
-checked-in retrieval measurements belong to the Python backend. Browser timings
-are measured during each request and depend on the visitor's device.
+SciFact benchmark uses the browser ranking implementation with Node CPU inference.
+Live browser inference uses WebAssembly; timings depend on the device. Historical
+Python fixture measurements remain separately labeled. [Evaluation](scifact-evaluation.md)
 
 <details>
 <summary>Python backend components</summary>
@@ -87,7 +98,7 @@ the reranked configuration also reranks the fused candidates.
 
 </details>
 
-The [PNG](architecture-pages.png) is the presentation diagram used in the README and
+The [PNG](architecture-scifact.png) is the presentation diagram used in the README and
 website. The Mermaid references provide editable descriptions of the deployment
 and backend paths.
 

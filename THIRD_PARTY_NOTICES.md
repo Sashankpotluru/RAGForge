@@ -2,6 +2,27 @@
 
 The MIT license covers the original RAGForge code and synthetic fixture. Upstream software and model weights retain their own terms. Installed Python distributions carry their license metadata and bundled notices. The dependency graph and distribution hashes are recorded in [uv.lock](uv.lock).
 
+## SciFact data
+
+The public workbench redistributes the BEIR-formatted SciFact abstract collection
+and a small set of training-split example claims. The abstract database is released
+under ODC-By 1.0; claims and evidence annotations are CC BY 4.0, according to the
+[original SciFact license](https://github.com/allenai/scifact/blob/master/LICENSE.md).
+These data are separate from RAGForge's MIT-licensed code.
+
+The workbench converts the official corpus to a browser JSON schema and publishes
+derived MiniLM vectors. Original document IDs, titles and abstract text are
+retained. The preparation manifest records archive, corpus and vector hashes.
+This product includes data from the SciFact/S2ORC abstract database, made available
+under the [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/1-0/).
+Example claims retain the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+attribution and license. No endorsement by the dataset authors is implied.
+
+- David Wadden et al. (2020), [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/), EMNLP.
+- Nandan Thakur et al. (2021), [BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://github.com/beir-cellar/beir), NeurIPS Datasets and Benchmarks.
+
+## Software and models
+
 PDF extraction uses PyMuPDF, distributed under GNU AGPL or a commercial license. Review the applicable terms for your distribution or hosted deployment. [PyMuPDF licensing](https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright)
 
 Qdrant and its Python client are separately distributed projects. The optional model downloads are external artifacts. Review each model card, revisions and upstream license before reuse. [Qdrant](https://github.com/qdrant/qdrant) · [Qdrant client](https://github.com/qdrant/qdrant-client) · [embedding fixture model](https://huggingface.co/sentence-transformers-testing/stsb-bert-tiny-safetensors) · [cross-encoder](https://huggingface.co/cross-encoder/ms-marco-TinyBERT-L2-v2)

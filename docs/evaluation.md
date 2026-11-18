@@ -1,5 +1,10 @@
 # Retrieval fixture evaluation
 
+This page records the original six-document Python regression fixture. The
+primary public benchmark now uses **5,183 SciFact abstracts and 300 test queries**.
+See [SciFact results and methodology](scifact-evaluation.md) for those measurements.
+The fixture scores below measure a different implementation and dataset.
+
 The packaged fixture contains six original synthetic documents and twelve questions, including a multi-span question. Each gold span identifies a source, a location and a half-open range in its whitespace-normalized text. A retrieved chunk covers a span when the ranges intersect at that source and location. Cases carry the metadata predicates used at search time. The small corpus permits near-saturated rankings and does not establish quality on real collections.
 
 | Configuration | Recall@1 | Hit rate@1 | MRR@10 | Binary nDCG@10 | Novelty nDCG@10 |

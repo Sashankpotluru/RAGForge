@@ -3,6 +3,34 @@
 Verified on 2026-11-18 on macOS ARM64 with Python 3.13.2. This record separates
 local checks, model measurements, and hosted build verification.
 
+## SciFact benchmark release
+
+The public workbench now uses 5,183 abstracts rather than the six-policy fixture.
+All 300 official test queries completed in each of four retrieval modes. The
+[measurement report](scifact-evaluation.md) records the fixed protocol, model/data
+hashes, timings, bootstrap intervals and both gains and regressions.
+
+- **13 Node tests passed**, covering metrics, incomplete evaluations, qrels,
+  vector integrity, candidate bounds, excerpt citation checks, cancellation and
+  the exact public artifact allowlist.
+- **73 Python tests passed, two opt-in integration tests skipped locally**.
+  Ruff formatting/lint and mypy passed. The existing unused PyMuPDF mypy
+  configuration note is non-failing.
+- **6,000 metric comparisons matched exactly** against `pytrec-eval-terrier`
+  0.5.11 using the original test qrels. This checks every query/method/metric,
+  without rerunning or substituting the model rankings. The audit does not
+  validate bootstrap coverage or generated answers.
+- Two preparations produced identical 7,961,088-byte document vectors. The
+  static build checks corpus/vector alignment and binds its aggregate results
+  to the full report's SHA-256.
+- Real Chromium checks exercised all four search modes with pinned WASM models,
+  corpus filtering/paging and cancel/retry at mobile width. Keyword search made
+  no neural model/runtime/vector request. A real Flan-T5 run without a unique
+  phrase match correctly withheld its generated answer and kept the evidence.
+
+The sections below retain the earlier backend and six-policy release checks;
+their fixture results do not describe SciFact retrieval quality.
+
 ## Local quality gates
 
 Run these commands from the repository root after the locked development setup:
@@ -164,8 +192,8 @@ Not verified or delivered in this release:
 
 - Docker/Compose execution on this Mac (covered instead by the hosted Linux run).
 - Hosted LLM compatibility or answer entailment using a real provider.
-- Production load, multi-worker consistency, tenant authorization, or general
-  retrieval improvement on an independent real-world benchmark.
+- Production load, multi-worker consistency, tenant authorization, or retrieval
+  improvement across multiple independent real-world collections.
 - Managed Python backend hosting or the other nine portfolio projects.
 
 The [security boundaries](security.md) and [implementation decisions](implementation-notes.md)

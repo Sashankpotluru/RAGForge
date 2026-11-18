@@ -6,27 +6,29 @@ RAGForge searches documents, retrieves useful passages, and ties answers back to
 their sources. It combines vector search with BM25, merges their rankings, and
 can rerank the results before passing evidence to a language model.
 
-This repository contains the full Python backend and a browser demo. Document
-ingestion, versioning, persistence, and evaluation live in the backend. The demo
-gives you a quick way to try retrieval without installing anything.
+This repository contains a Python backend and a browser workbench. The public
+workbench searches all **5,183 scientific abstracts in BEIR SciFact**. A reproducible
+benchmark compares four retrieval methods on **300 labeled test queries** using
+the same ranking code and model artifacts as the browser edition.
 
 ## Try it
 
 **[Open the demo](https://sashankpotluru.github.io/RAGForge/)**
 
-Ask **“How often do database backups run?”** The sample document says backups run
-every six hours. Inspect the retrieved passage and follow the answer's citation
-back to its source.
+Enter a scientific claim or choose an example, compare retrieval modes, and read
+the returned abstracts. The collection contains evidence that can support or
+refute a claim; a high search rank is not a verdict that the claim is true.
 
-The hosted demo runs on GitHub Pages. Search happens in your browser, so it works
-when the maintainer's computer is off. Keyword search is ready immediately.
-Neural search and model answers are optional: the page explains the download
-before loading weights onto your device. No account or API key is needed.
+The hosted demo runs on GitHub Pages. Keyword search uses the downloaded corpus.
+Neural search loads precomputed document vectors and embeds your query; it does
+not embed thousands of abstracts on each visit. Model answers are optional. The
+page explains the downloads before loading model weights. No account or API key
+is needed.
 
-The six sample documents are fictional policies written for this project. The
-page doesn't upload documents or connect to a private index. Model answers require
-a supported browser and enough memory; keyword search works without loading a
-model. [Browser setup and limitations](docs/browser-demo.md)
+Queries and retrieved text stay in the browser. The page does not connect to a
+private index. Optional model inference requires a supported browser and enough
+memory. The benchmark measures document retrieval; it does not score generated
+answers or verify scientific claims. [Browser setup and limitations](docs/browser-demo.md)
 
 ## What's in the backend
 
@@ -46,8 +48,8 @@ inspected. [Implementation decisions](docs/implementation-notes.md)
 
 ## Run the sample UI locally
 
-Run the Python-backed workbench locally with an empty dedicated storage directory.
-Its six synthetic documents are bundled with the application.
+Run the Python-backed sample workbench locally with an empty dedicated storage
+directory. This quick smoke-test app retains the six synthetic policy documents.
 
 ```bash
 uv sync --locked
@@ -96,24 +98,38 @@ Use `ragforge --help` for CLI commands. Configure retrieval models and optional 
 
 ## What the evaluation shows
 
-The Python backend was tested on twelve labeled questions across six sample
-documents. These runs used pinned tiny neural models:
+The SciFact benchmark compares BM25, dense retrieval, hybrid fusion and
+cross-encoder reranking across the complete collection. Settings are fixed before
+the test run. Published artifacts include per-query rankings, model and data
+hashes, timings, bootstrap intervals, and comparisons against BM25.
 
-| Neural retrieval | Hit rate@1 | MRR@10 | Recall@1 |
-| --- | ---: | ---: | ---: |
-| Dense | 83.3% | 0.889 | 79.2% |
-| Hybrid | 91.7% | 0.958 | 87.5% |
-| Hybrid + cross-encoder | 100.0% | 1.000 | 95.8% |
+| Method | nDCG@10 | MRR@10 | Recall@10 | Recall@100 | Median search |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| BM25 | 0.6629 | 0.6316 | 0.7833 | 0.8826 | 1.05 ms |
+| Dense MiniLM | 0.6465 | 0.6056 | 0.7867 | 0.9250 | 6.13 ms |
+| Hybrid (RRF) | 0.6802 | 0.6448 | 0.8096 | 0.9550 | 6.83 ms |
+| Hybrid + reranking | 0.6807 | 0.6492 | 0.8062 | 0.9550 | 447.84 ms |
 
-Reranking found a relevant first passage for every question in this fixture. That
-doesn't establish the same result on a larger or unfamiliar collection. The
-[evaluation notes](docs/evaluation.md) explain the labels, metrics and limits;
-the [raw results](evaluations/results) include per-question evidence and timings.
-These measurements describe the Python backend, not the browser's ONNX models.
+Hybrid retrieved more of the judged relevant papers within its first 100 results.
+Its nDCG@10 improvement over BM25 was 0.0173, with a paired 95% bootstrap interval
+of −0.0055 to +0.0398. That interval includes zero. Reranking added little average
+ranking quality while taking roughly 66 times as long as hybrid search in this
+run. Those trade-offs matter more than declaring one method the winner.
+
+All 300 queries completed in all four modes. An independent `trec_eval` audit
+matched all **6,000 per-query metric values** exactly.
+
+The [SciFact evaluation](docs/scifact-evaluation.md) explains the protocol and
+results. This measures the browser retrieval implementation under Node.js CPU
+inference, not the Python API's ingestion or Qdrant throughput. Browser inference
+uses WebAssembly, so live latency depends on the visitor's device.
+
+The original [six-document Python fixture](docs/evaluation.md) remains a regression
+check. Its near-perfect scores are not the headline benchmark.
 
 ## Architecture
 
-![RAGForge architecture: GitHub Actions deploys to GitHub Pages; retrieval and optional generation run in the visitor's browser, with the Python backend available separately](docs/architecture-pages.png)
+![RAGForge architecture: SciFact index preparation and offline evaluation feed the GitHub Pages browser workbench; the Python backend runs separately](docs/architecture-scifact.png)
 
 GitHub Actions builds the website and publishes it to GitHub Pages. Retrieval and
 optional model inference run in the visitor's browser. The full Python backend
@@ -141,10 +157,14 @@ static build checks. [Verification record](docs/verification.md)
 | `src/ragforge/` | Python ingestion, storage, retrieval, generation and API |
 | `src/ragforge/demo/` | Shared workbench UI and isolated Python demo |
 | `web/` | Browser retrieval, model runtime, tests and Pages build |
+| `benchmarks/` | SciFact preparation, fixed evaluation protocol and public index |
 | `tests/` | Python unit, contract and integration tests |
 | `evaluations/results/` | Recorded measurements and provenance |
 | `docs/` | Design decisions, setup, operations and limitations |
 
 [Architecture diagram](docs/architecture.md) · [Verification](docs/verification.md) · [Security and trust boundaries](docs/security.md) · [Implementation decisions](docs/implementation-notes.md)
 
-The backend is designed for one trusted operator. The separate browser workbench exposes a fixed sample corpus. Original code is MIT licensed. PDF extraction and optional model weights have separate terms. [License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+The backend is designed for one trusted operator. The browser workbench searches
+a fixed public research collection. Original code is MIT licensed; SciFact data,
+PDF extraction and model weights have separate terms.
+[License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)

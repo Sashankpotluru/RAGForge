@@ -8,4 +8,10 @@ Metadata remains nested under its own key. It cannot replace the top-level sourc
 
 The evaluation contract supersedes the design's earlier naming. Recall and hit rate are distinct. Standard binary ndcg@10 uses unique relevant chunk IDs. The additional novelty_ndcg@10 rewards newly covered evidence and deduplicates repeated matches. See [evaluation methods](evaluation.md).
 
-Source and index identifiers, ranked evidence and citation references are inspectable. A non-fixture benchmark of at least 50 independently labeled questions, load testing and answer-faithfulness evaluation remain future work. The release has no web UI or hosted deployment. The dependency-review service was unavailable. Local installation and tests do not establish independent dependency-risk approval.
+Source and index identifiers, ranked evidence and citation references are inspectable.
+The GitHub Pages workbench uses the full BEIR SciFact corpus and shares its ranking
+implementation and pinned ONNX model artifacts with the 300-query retrieval benchmark.
+The Python service retains its separate ingestion, persistence and fixture checks.
+Load testing, generated-answer faithfulness and cross-domain evaluation remain
+future work. Local installation and passing tests do not establish independent
+dependency-risk approval. See the [SciFact evaluation](scifact-evaluation.md).
