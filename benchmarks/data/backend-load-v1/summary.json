@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "report_sha256": "df100ca61213acbd442be43702a9304a5fcaf2976a6fec7b2f319c49791130be",
+  "scope": "Warm loopback HTTP hybrid search on one host, one Uvicorn worker, SQLite and native Qdrant.",
+  "scenarios": [
+    {
+      "clients": 1,
+      "trials": 3,
+      "requests": 707,
+      "successes": 707,
+      "failures": 0,
+      "elapsed_s": 90.195442958,
+      "successful_requests_per_s": 7.838533486988011,
+      "latency_ms": {
+        "p50": 122.133167,
+        "p95": 205.387083,
+        "p99": 229.951291
+      }
+    },
+    {
+      "clients": 4,
+      "trials": 3,
+      "requests": 743,
+      "successes": 743,
+      "failures": 0,
+      "elapsed_s": 91.252986001,
+      "successful_requests_per_s": 8.142199313805007,
+      "latency_ms": {
+        "p50": 469.709083,
+        "p95": 600.767042,
+        "p99": 626.928958
+      }
+    },
+    {
+      "clients": 8,
+      "trials": 3,
+      "requests": 753,
+      "successes": 753,
+      "failures": 0,
+      "elapsed_s": 92.770379166,
+      "successful_requests_per_s": 8.116814944268027,
+      "latency_ms": {
+        "p50": 978.894,
+        "p95": 1087.0875,
+        "p99": 1163.470042
+      }
+    },
+    {
+      "clients": 16,
+      "trials": 3,
+      "requests": 764,
+      "successes": 764,
+      "failures": 0,
+      "elapsed_s": 95.669754001,
+      "successful_requests_per_s": 7.985805001568355,
+      "latency_ms": {
+        "p50": 2011.04125,
+        "p95": 2170.859209,
+        "p99": 2381.812708
+      }
+    }
+  ]
+}
