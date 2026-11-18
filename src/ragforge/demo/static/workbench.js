@@ -251,7 +251,7 @@ function renderBenchmark(results) {
     + " paired nDCG intervals relative to BM25 include zero.", "note");
   const data = element("p", undefined, "note");
   data.append(link("Full per-query results", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/main/evaluations/results/scifact-v1.json"),
-    " · ", link("Methodology and paired comparisons", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/evaluation.md"));
+    " · ", link("Methodology and paired comparisons", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/scifact-evaluation.md"));
   byId("metrics").append(table, pairedNote, comparisons, element("p", "Measured on " + results.hardware + " using Node " + results.node
     + " after model warmup. Browser downloads, initialization and answer generation are excluded.", "note"), data);
   byId("metric-guide").textContent = "nDCG rewards relevant papers near the top. Recall measures the fraction of judged relevant papers retrieved. MRR measures how early the first relevant paper appears. Hit rate counts top-ranked relevant papers. Intervals summarize variation across these test claims.";
