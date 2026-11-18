@@ -113,11 +113,12 @@ These measurements describe the Python backend, not the browser's ONNX models.
 
 ## Architecture
 
-![System architecture](docs/architecture-1.png)
+![RAGForge architecture: GitHub Actions deploys to GitHub Pages; retrieval and optional generation run in the visitor's browser, with the Python backend available separately](docs/architecture-1.png)
 
-This diagram shows the backend and the original tunnel-based demo. Its “Mac must
-stay running” label applies to that older deployment. The current GitHub Pages
-demo runs in the visitor's browser. [Current hosting topology](docs/architecture.md)
+GitHub Actions builds the website and publishes it to GitHub Pages. Retrieval and
+optional model inference run in the visitor's browser. The full Python backend
+remains in this repository and can be run separately; it is not a service hosted
+by GitHub Pages. [Architecture and data flow](docs/architecture.md)
 
 ## Tests and containers
 

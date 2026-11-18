@@ -1,22 +1,17 @@
 # RAGForge architecture
 
-RAGForge is an explicit, single-worker retrieval service. The API and CLI compose
-the same Python components; the evaluation runner exercises the same retrieval
-path. SQLite owns which document versions are visible. Qdrant and the lexical
-index are retrieval backends, not competing sources of truth.
+RAGForge has two execution paths: a public browser workbench hosted on GitHub
+Pages and a Python backend that can be run separately. Both implementations live
+in the same GitHub repository. The website does not depend on the Python service.
 
-## Backend diagram
+## Deployment diagram
 
-![Backend architecture and original tunnel deployment](architecture-1.png)
+![GitHub Pages deployment, browser retrieval and generation, and the separate Python backend](architecture-1.png)
 
-This supplied diagram is kept unchanged. The tunnel on its left describes the
-original Mac-hosted demo. The current public website uses the separate browser
-deployment below. Private queries and the evaluation runner both call the retrieval
-service; the evaluator measures retrieval rather than serving private queries.
-
-The backend and its isolated Python sample app use separate stores. They share
-component implementations, not private data. SQLite decides which document versions
-are active; Qdrant and BM25 supply rankings for eligible chunks.
+GitHub Actions tests the code, builds an allowlisted static artifact, and deploys
+that artifact to GitHub Pages. The visitor's browser loads the workbench and six
+synthetic policies. Keyword search is ready immediately; neural retrieval and
+answer generation download their models only when requested.
 
 ## Current public hosting
 
@@ -28,6 +23,7 @@ flowchart LR
     models["Pinned public ONNX weights"] -->|optional download| browser
     browser --> evidence["Ranked passages + citations"]
     evidence --> model["Optional Flan-T5 generation<br/>WebAssembly worker"]
+    models -->|optional download| model
 ```
 
 GitHub Pages serves static files; it does not run FastAPI, SQLite, Qdrant, or a
@@ -41,19 +37,15 @@ checked-in retrieval measurements belong to the Python backend. Browser timings
 are measured during each request and depend on the visitor's device.
 
 <details>
-<summary>Editable reference for the original Python deployment</summary>
+<summary>Python backend components</summary>
 
 ```mermaid
 flowchart TB
-    accTitle: RAGForge architecture and public demo boundary
-    accDescr: A trusted API and CLI ingest documents into a private runtime. The public browser reaches a separate sample-only read-only demo through a temporary HTTPS tunnel. Each runtime owns separate SQLite, Qdrant and BM25 stores. Retrieval fuses dense and lexical ranks, optionally reranks, and returns cited evidence before optional generation.
+    accTitle: RAGForge Python backend
+    accDescr: A trusted API and CLI ingest documents into a single-worker runtime. SQLite tracks active versions, Qdrant stores dense vectors, and BM25 provides lexical rankings. Retrieval returns cited evidence before optional generation. The evaluation runner measures this same retrieval path. This backend is run separately from the GitHub Pages website.
     caller["Trusted local API / CLI"]
     entry["Private runtime<br/>single-worker lock"]
     caller --> entry
-    browser["Public browser<br/>evidence workbench"]
-    tunnel["Temporary HTTPS tunnel<br/>Mac must stay running"]
-    demo["Isolated read-only demo<br/>sample corpus · request limits"]
-    browser --> tunnel --> demo
     ingest["Ingestion<br/>load · chunk · stage · publish"]
     entry -->|documents| ingest
     catalog[("SQLite<br/>active versions")]
@@ -64,7 +56,6 @@ flowchart TB
     ingest --> lexical
     search["Retrieval<br/>scope · candidates · RRF · rerank"]
     entry -->|private queries| search
-    demo -->|sample queries| search
     catalog -->|active IDs + filters| search
     vectors -->|dense ranks| search
     lexical -->|lexical ranks| search
@@ -77,11 +68,14 @@ flowchart TB
     evaluation --> results["Versioned results<br/>Recall · HitRate · MRR · nDCG"]
 ```
 
-The reference shows shared component types, **not shared data**: the Python demo
-constructs its own fresh runtime and sample-only stores. It never mounts the
-private API or reads an existing user index. Only the trusted API/CLI can ingest
-arbitrary documents. The demo publishes evidence, answers, sample corpus, and
-checked-in evaluation results; it has no mutation routes.
+The API and CLI compose the same Python components. SQLite owns which document
+versions are visible; Qdrant and BM25 supply rankings for eligible chunks. Private
+queries and the evaluation runner both call the retrieval service.
+
+The optional local Python sample app constructs its own fresh runtime and
+sample-only stores. It never mounts the private API or reads an existing user
+index. Only the trusted API/CLI can ingest arbitrary documents. The Python sample
+app has no mutation routes. It is a separate way to run the workbench locally.
 
 Solid lines show the core path. Dashed lines require an enabled answer provider.
 Dense-only evaluation bypasses BM25/fusion; hybrid evaluation adds BM25 and RRF;
@@ -89,8 +83,9 @@ the reranked configuration also reranks the fused candidates.
 
 </details>
 
-The supplied [PNG](architecture-1.png) is the canonical presentation image. It is
-not generated by the Mermaid references above.
+The [PNG](architecture-1.png) is the presentation diagram used in the README and
+website. The Mermaid references provide editable descriptions of the deployment
+and backend paths.
 
 ## Consistency boundary
 

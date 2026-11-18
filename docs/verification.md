@@ -153,9 +153,10 @@ recovery, staged-vector cleanup, chunking, metadata scope validation, and query
 score provenance. The release includes regression tests for the accepted findings.
 CLI input-error handling is also covered by regression tests.
 
-The original architecture reference was rendered and visually inspected. The
-current presentation image is the supplied PNG, copied unchanged into the docs
-and demo assets (SHA-256 `0150e1c11c4b22821c6a2fb6874a61ff260bad16b23073d4cefb7361f5c29afc`).
+The architecture image now shows the GitHub Actions deployment, static GitHub
+Pages hosting, browser retrieval and optional generation, and the separately run
+Python backend. The README and website use identical copies. The previous
+tunnel diagram was replaced, and the surrounding descriptions were updated.
 The portfolio root contains exactly the ten requested project directories; only
 RAGForge is implemented.
 
