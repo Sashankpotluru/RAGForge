@@ -27,7 +27,7 @@ flowchart LR
     pages --> browser["Visitor's browser<br/>keyword / neural retrieval"]
     models["Pinned public ONNX weights"] -->|optional download| browser
     browser --> evidence["Ranked passages + citations"]
-    evidence --> model["Optional browser model<br/>WebGPU generation"]
+    evidence --> model["Optional Flan-T5 generation<br/>WebAssembly worker"]
 ```
 
 GitHub Pages serves static files; it does not run FastAPI, SQLite, Qdrant, or a
