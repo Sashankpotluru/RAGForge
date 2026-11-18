@@ -148,3 +148,7 @@ figcaption { margin-top: 12px; max-width: 75ch; }
 .comparisons ul { padding-left: 20px; }
 
 #dataset-picker { margin-bottom: 14px; }
+
+#backend-capacity { margin-top: 30px; }
+.capacity-table { overflow-x: auto; }
+.capacity-table td { white-space: nowrap; }

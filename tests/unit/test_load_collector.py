@@ -13,6 +13,10 @@ async def test_closed_loop_drains_and_counts_every_outcome(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[2]))
     from benchmarks.load.collector import collect, diagnostics, metrics, summarize
 
+    # Keep the issuance window deterministic on slow CI hosts. The transport's last
+    # response crosses the deadline and asyncio's real timeout cancels its wait.
+    elapsed_ns = 0
+    monkeypatch.setattr("benchmarks.load.collector.perf_counter_ns", lambda: elapsed_ns)
     calls = []
     search = dict(mode="hybrid", collection="scope", result_limit=10, candidate_limit=100)
     chunk = dict(
@@ -28,6 +32,8 @@ async def test_closed_loop_drains_and_counts_every_outcome(monkeypatch):
     )
 
     async def handler(req):
+        nonlocal elapsed_ns
+        elapsed_ns += 1_000_000
         i = len(calls)
         query = json.loads(req.content)["query"]
         calls.append(query)
@@ -36,6 +42,7 @@ async def test_closed_loop_drains_and_counts_every_outcome(monkeypatch):
         if i == 2:
             raise httpx.ConnectError("disconnected")
         if i >= 4:
+            elapsed_ns += 90_000_000
             await asyncio.sleep(1)
         response = dict(
             request_id="id",

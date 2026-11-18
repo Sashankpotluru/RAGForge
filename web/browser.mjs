@@ -6,10 +6,11 @@ import { WorkerClient } from "./worker-client.mjs";
 const client = new WorkerClient(() => new Worker(new URL("./inference.mjs", import.meta.url), { type: "module" }));
 export async function load() {
   if (typeof Worker !== "function") throw Error("Enable browser workers to search the corpus.");
-  const [{ corpus }, ...results] = await Promise.all([loadCorpus(),
+  const [{ corpus }, capacity, ...results] = await Promise.all([loadCorpus(),
+    fetchAsset("backend-load.json").then(r => r.json()),
     ...["results.json", "arguana-results.json"].map(name => fetchAsset(name).then(r => r.json()))]);
   const neural = typeof WebAssembly === "object";
-  return { corpus, results, caps: {
+  return { corpus, results, capacity, caps: {
     modes: neural ? protocol.modes : ["bm25"], defaultMode: "bm25", generation: neural ? "Flan-T5 Base" : null,
   } };
 }

@@ -1,4 +1,7 @@
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { datasets, paths } from "../benchmarks/dataset.mjs";
+import { validateLoad } from "./validate-load.mjs";
 import { protocol } from "./protocol.mjs";
 import { sha256, validateCorpus, validateVectors } from "./vector-index.mjs";
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
@@ -57,7 +60,6 @@ export async function buildSite(output = join(root, "dist/RAGForge")) {
     }
     const html = await readFile(join(demo, "static/index.html"), "utf8");
     if (!html.includes('data-runtime="server"')) throw Error("Missing runtime marker.");
-    await writeFile(join(staging, "index.html"), html.replace('data-runtime="server"', 'data-runtime="browser"'));
     const data = join(root, "benchmarks/data/scifact-v1");
     const manifest = JSON.parse(await readFile(join(data, "index.json"), "utf8"));
     const corpus = await validateCorpus(await readFile(join(data, "corpus.json")), manifest);
@@ -76,6 +78,23 @@ export async function buildSite(output = join(root, "dist/RAGForge")) {
       const publicName = dataset.key === "scifact" ? "results.json" : dataset.key + "-results.json";
       await copyFile(summaryFile, join(staging, publicName));
     }
+    const capacity = await readFile(join(root, "benchmarks/data/backend-load-v1/summary.json"));
+    const reportPath = "evaluations/results/backend-load-v1.json";
+    const report = await readFile(join(root, reportPath));
+    await validateLoad(report, JSON.parse(capacity));
+    // Link only when the immutable Git revision actually contains these report bytes.
+    // An unpublished local rerun can still display its completed measurements.
+    let revision = "";
+    try {
+      const options = { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] };
+      const head = execFileSync("git", ["rev-parse", "HEAD"], options).trim();
+      const committed = execFileSync("git", ["rev-parse", head + ":" + reportPath], options).trim();
+      const blob = createHash("sha1").update("blob " + report.length + "\0").update(report).digest("hex");
+      if (blob === committed) revision = head;
+    } catch { /* A source archive can be built without Git metadata. */ }
+    const runtime = 'data-runtime="browser" data-load-revision="' + revision + '"';
+    await writeFile(join(staging, "index.html"), html.replace('data-runtime="server"', runtime));
+    await writeFile(join(staging, "backend-load.json"), capacity);
     await rm(output, { recursive: true, force: true });
     await rename(staging, output);
   } finally {

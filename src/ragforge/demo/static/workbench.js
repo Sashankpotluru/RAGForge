@@ -265,6 +265,50 @@ function renderBenchmark(results) {
     ? "Relevance means a judged counterargument. Each query’s own document ID is excluded. Five queries have an absent relevant document and contribute zero. The reranker keeps the beginnings of both arguments within 256 tokens."
     : "nDCG rewards relevant papers near the top. Recall measures the fraction of judged relevant papers retrieved. MRR measures how early the first relevant paper appears. Hit rate counts top-ranked relevant papers.";
 }
+function renderCapacity(report) {
+  const section = byId("backend-capacity");
+  const table = element("table");
+  table.createCaption().textContent = "Three 30-second trials per client count, pooled";
+  const head = table.createTHead().insertRow();
+  for (const label of ["Clients", "Requests", "Failures", "Successes/s", "p50", "p95", "p99"]) {
+    const header = element("th", label);
+    header.scope = "col";
+    head.append(header);
+  }
+  const body = table.createTBody();
+  for (const scenario of report.scenarios) {
+    const row = body.insertRow();
+    const clients = element("th", String(scenario.clients));
+    clients.scope = "row";
+    row.append(clients);
+    row.insertCell().textContent = scenario.requests.toLocaleString();
+    const rate = scenario.requests ? (100 * scenario.failures / scenario.requests).toFixed(1) + "%" : "—";
+    row.insertCell().textContent = scenario.failures + " (" + rate + ")";
+    row.insertCell().textContent = scenario.successful_requests_per_s.toFixed(2);
+    for (const p of ["p50", "p95", "p99"]) {
+      const value = scenario.latency_ms[p];
+      row.insertCell().textContent = value === null ? "—" : value.toFixed(0) + " ms";
+    }
+  }
+  const panel = element("div", undefined, "sheet capacity-table");
+  panel.tabIndex = 0;
+  panel.setAttribute("role", "region");
+  panel.setAttribute("aria-label", "Backend load measurements");
+  panel.append(table);
+  const sources = element("p", undefined, "note");
+  const revision = document.documentElement.dataset.loadRevision;
+  if (revision) {
+    sources.append(link("Full trials and request observations", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/"
+      + revision + "/evaluations/results/backend-load-v1.json"), " · ");
+  }
+  sources.append(link("Load-test methodology", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/load-testing.md"));
+  section.append(element("h2", "Python API load test"), element("p", report.scope, "note"), panel,
+    element("p", "Latency percentiles cover successful responses only, through JSON and citation validation. "
+      + "Throughput includes time to finish in-flight requests. Clients send the next search as soon as the previous one finishes.", "note"),
+    element("p", "The service searched 1,000 SciFact abstracts using CPU Tiny-BERT embeddings and BM25. "
+      + "The browser uses MiniLM. During stalls these closed-loop clients send fewer requests, limiting what the measurements say about independently arriving traffic.", "note"), sources);
+  section.hidden = false;
+}
 function renderResults(results, corpus) {
   if (browser) {
     const select = byId("benchmark-dataset");
@@ -305,6 +349,7 @@ async function start() {
   describeMode();
   renderCorpus(data.corpus);
   renderResults(data.results, data.corpus);
+  if (browser) renderCapacity(data.capacity);
   canGenerate = Boolean(caps.generation);
   if (browser) {
     byId("gen-note").textContent = canGenerate

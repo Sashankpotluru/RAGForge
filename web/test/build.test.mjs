@@ -4,6 +4,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { datasets, paths, root } from "../../benchmarks/dataset.mjs";
+import { validateLoad } from "../validate-load.mjs";
 import { buildSite, validateRelease } from "../build.mjs";
 
 test("a clean Pages artifact contains only its public allowlist, including after rebuild", async t => {
@@ -18,7 +19,7 @@ test("a clean Pages artifact contains only its public allowlist, including after
     "assets", "assets/architecture-evaluation.png", "assets/browser.mjs", "assets/inference.mjs",
     "assets/retrieval.mjs", "assets/workbench.css", "assets/workbench.js", "assets/worker-client.mjs",
     "assets/assets.mjs", "assets/neural.mjs", "assets/protocol.mjs", "assets/vector-index.mjs",
-    "arguana-results.json", "assets/generation.mjs", "corpus.json", "index.html", "index.json", "results.json", "vectors.f32",
+    "arguana-results.json", "backend-load.json", "assets/generation.mjs", "corpus.json", "index.html", "index.json", "results.json", "vectors.f32",
   ].sort());
   const html = await readFile(join(site, "index.html"), "utf8");
   assert.match(html, /data-runtime="browser"/);
@@ -54,4 +55,26 @@ test("release binding rejects a mismatched summary, manifest, report or audit", 
     report, summary, audit), /Index/);
   await assert.rejects(validateRelease(dataset, manifest, Buffer.from("changed"), summary, audit), /digest/);
   await assert.rejects(validateRelease(dataset, manifest, report, summary, { ...audit, comparisons: 0 }), /audit/);
+});
+
+test("load release rejects raw timing, count, failure or aggregate drift", async () => {
+  const bytes = await readFile(join(root, "evaluations/results/backend-load-v1.json"));
+  const summary = JSON.parse(await readFile(join(root, "benchmarks/data/backend-load-v1/summary.json")));
+  const { createHash } = await import("node:crypto");
+  for (const change of [
+    report => { report.model.revision = "unexpected"; },
+    report => { report.workload.document_ids.reverse(); },
+    report => { report.trials[0].requests[0].finish_ns++; },
+    report => { report.trials[0].requests[0].failure = "timeout"; },
+    report => { report.trials[0].summary.requests++; },
+    report => { report.scenarios[0].latency_ms.p95++; },
+  ]) {
+    const altered = JSON.parse(bytes);
+    change(altered);
+    const modified = Buffer.from(JSON.stringify(altered));
+    const hash = createHash("sha256").update(modified).digest("hex");
+    await assert.rejects(validateLoad(modified, { ...summary, report_sha256: hash }), /Invalid backend load/);
+  }
+  await assert.rejects(validateLoad(bytes, { ...summary, private_rows: [] }), /aggregate mismatch/);
+  await assert.rejects(validateLoad(bytes, { ...summary, report_sha256: "0".repeat(64) }), /digest/);
 });
