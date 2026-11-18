@@ -1,84 +1,71 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-runtime="server">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>RAGForge · Evidence workbench</title>
-    <link href="/assets/workbench.css" rel="stylesheet" />
-    <script src="/assets/workbench.js" defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Evidence workbench | RAGForge</title>
+    <link href="./assets/workbench.css" rel="stylesheet">
+    <script type="module" src="./assets/workbench.js"></script>
   </head>
   <body>
-    <header>
-      <a class="brand" href="#workbench">RAGForge</a>
-      <nav aria-label="Views">
-        <a href="#workbench">Workbench</a><a href="#corpus">Corpus</a
-        ><a href="#results">Results</a><a href="#architecture">Architecture</a>
+    <a class="skip" href="#main">Skip to workspace</a>
+    <header class="rail">
+      <a class="brand" href="#workbench"><span class="brand-mark" aria-hidden="true"></span>RAGForge</a>
+      <nav aria-label="Workspace">
+        <a href="#workbench" aria-current="page">Workbench</a>
+        <a href="#corpus">Corpus</a>
+        <a href="#results">Results</a>
+        <a href="#architecture">Architecture</a>
       </nav>
+      <a class="project" href="https://github.com/Sashankpotluru/RAGForge">Source on GitHub</a>
     </header>
-    <main>
+    <main id="main" tabindex="-1">
       <section id="workbench">
         <h1>Evidence workbench</h1>
-        <p class="dek">
-          Search six sample policy documents and inspect the passages behind
-          each answer.
-        </p>
-        <div class="desk">
-          <form id="query">
-            <label for="question">Your question</label
-            ><textarea id="question" maxlength="500" rows="3" required>
-How often do database backups run?</textarea
-            ><label for="mode">Retrieval mode</label
-            ><select id="mode"></select>
-            <div class="actions">
-              <button id="search" disabled>Find evidence</button
-              ><button id="answer" type="button" disabled>
-                Generate answer
-              </button>
-            </div>
-            <p id="model"></p>
-            <h2>Sample questions</h2>
-            <div id="samples"></div>
-          </form>
-          <article aria-label="Retrieved evidence">
-            <h2>Source passages</h2>
-            <p role="status" id="status">Loading sample corpus…</p>
-            <div id="generated"></div>
-            <div id="hits"></div>
-          </article>
-        </div>
+        <p class="intro">Search six sample policies and read the passages behind each answer.</p>
+        <form id="query" class="sheet">
+          <div class="question-label">
+            <label for="question">Your question</label>
+            <details id="examples"><summary>Sample questions</summary><div id="samples"></div></details>
+          </div>
+          <textarea id="question" rows="2" maxlength="500" required>How often do database backups run?</textarea>
+          <div class="controls">
+            <div class="mode-field"><label for="mode">Retrieval mode</label><select id="mode" disabled aria-describedby="model"></select></div>
+            <div class="actions"><button id="search" class="primary" disabled>Find evidence</button><button id="cancel" type="button" hidden>Cancel</button></div>
+          </div>
+          <p id="model" class="note"></p>
+          <details class="generation"><summary>Cited answer</summary>
+            <p id="gen-note" class="note"></p><button id="answer" type="button" disabled>Generate answer</button>
+          </details>
+        </form>
+        <article class="evidence" aria-labelledby="passage-heading">
+          <h2 id="passage-heading">Source passages</h2>
+          <p role="status" id="status">Loading sample policies…</p>
+          <div id="generated"></div>
+          <div id="hits"></div>
+        </article>
       </section>
       <section id="corpus" hidden>
         <h1>Sample corpus</h1>
-        <p class="dek">
-          Original synthetic policies used for retrieval and evaluation.
-        </p>
-        <div id="docs"></div>
+        <p class="intro">Six original, synthetic policies. Open a document to read its full text.</p>
+        <div id="docs" class="sheet"></div>
       </section>
       <section id="results" hidden>
-        <h1>Measured results</h1>
-        <p class="dek">
-          Recorded neural retrieval evaluation on twelve synthetic questions
-          across six documents. These values describe this fixture only.
-        </p>
-        <div id="metrics"></div>
+        <h1>Retrieval results</h1>
+        <p class="intro">Recorded Python backend measurements for twelve questions across six synthetic policies.</p>
+        <div id="metrics" class="sheet"></div>
+        <p class="note">Hit rate measures how often the first result contains relevant evidence. Mean reciprocal rank (MRR) gives more credit when relevant evidence appears earlier in the first ten results.</p>
       </section>
       <section id="architecture" hidden>
-        <h1>Retrieval architecture</h1>
-        <p class="dek">
-          Follow a question through dense retrieval, lexical matching and
-          optional reranking to its cited passages.
-        </p>
-        <a href="/assets/architecture.svg" aria-label="Open full-size architecture diagram">
-          <img src="/assets/architecture.svg" alt="RAGForge architecture diagram" width="1000" />
-        </a>
-        <p>
-          Each query searches the sample collection. Hybrid retrieval fuses
-          dense and lexical rankings. The optional reranker scores those
-          candidates again. The local model extracts an answer from the
-          retrieved passages. The service attaches a citation when the
-          generated words match a single passage.
-        </p>
+        <h1>Architecture</h1>
+        <p class="intro">GitHub Pages serves the workbench and sample corpus. Each visitor’s browser ranks the documents and can run the optional models in a worker.</p>
+        <figure class="sheet">
+          <a href="./assets/architecture.png" aria-label="Open the full-size architecture diagram"><img src="./assets/architecture.png" alt="RAGForge architecture showing the original tunnel deployment and Python retrieval backend" loading="lazy"></a>
+          <figcaption>The original deployment routed requests through a tunnel to the Python backend. Select the diagram to inspect it at full size.</figcaption>
+        </figure>
       </section>
+      <noscript>This workbench requires JavaScript to search its sample corpus.</noscript>
     </main>
   </body>
 </html>

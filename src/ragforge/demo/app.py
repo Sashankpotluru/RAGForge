@@ -104,7 +104,7 @@ def create_demo_app(data_dir: Path, neural: bool = False, generate: bool = False
         return FileResponse(ROOT / "static/index.html")
 
     @app.get("/assets/{asset}")
-    def static(asset: Literal["workbench.js", "workbench.css", "architecture.svg"]) -> FileResponse:
+    def static(asset: Literal["workbench.js", "workbench.css", "architecture.png"]) -> FileResponse:
         return FileResponse(ROOT / "static" / asset)
 
     @app.get("/healthz")
