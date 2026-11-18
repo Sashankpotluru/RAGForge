@@ -12,6 +12,22 @@ benchmarks compare four retrieval methods on **300 SciFact queries** and **1,406
 ArguAna counterargument queries**, using the shared ranking engine and pinned
 model artifacts. A separate HTTP load experiment measures the Python backend.
 
+## Project status
+
+**The portfolio release is complete.** The delivered scope includes the Python
+API and CLI, document ingestion and versioning, hybrid retrieval and reranking,
+optional cited generation, a public browser demo, two real-world retrieval
+benchmarks, and a reproducible API load test. Source code, tests, measured results,
+setup instructions and the architecture diagram are available in this repository.
+
+The release passed 75 Python tests, 21 browser tests and three live
+Docker/Qdrant integration tests. [Verification record](docs/verification.md)
+
+Multi-user authorization, distributed deployment and systematic generated-answer
+accuracy evaluation are future extensions. The current Python backend is designed
+for one trusted operator and one worker; its load results describe that setup.
+GitHub Pages hosts the separate browser demo.
+
 ## Try it
 
 **[Open the demo](https://sashankpotluru.github.io/RAGForge/)**
