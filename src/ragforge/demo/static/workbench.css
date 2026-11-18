@@ -138,3 +138,11 @@ figcaption { margin-top: 12px; max-width: 75ch; }
   #metrics { padding-inline: 6px; }
   th, td { padding: 8px 4px; font-size: .875rem; }
 }
+#metrics { overflow-x: auto; }
+.interval { display: block; white-space: nowrap; font-size: .75rem; }
+.corpus-tools { display: grid; gap: 4px; margin: 16px 0 12px; max-width: 32rem; }
+.corpus-tools input { padding: 9px 11px; border: 1px solid #9baea3; border-radius: 4px; font: inherit; }
+.pager { display: flex; align-items: center; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
+.passage details { margin-top: 8px; }
+.comparisons { margin: 9px 0 14px; font-size: .9rem; }
+.comparisons ul { padding-left: 20px; }

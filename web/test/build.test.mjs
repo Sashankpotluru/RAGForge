@@ -14,15 +14,16 @@ test("a clean Pages artifact contains only its public allowlist, including after
   await buildSite(site);
   const files = (await readdir(site, { recursive: true })).sort();
   assert.deepEqual(files, [
-    "assets", "assets/architecture-pages.png", "assets/browser.mjs", "assets/inference.mjs",
+    "assets", "assets/architecture-scifact.png", "assets/browser.mjs", "assets/inference.mjs",
     "assets/retrieval.mjs", "assets/workbench.css", "assets/workbench.js", "assets/worker-client.mjs",
-    "corpus.json", "index.html", "results.json",
+    "assets/assets.mjs", "assets/neural.mjs", "assets/protocol.mjs", "assets/vector-index.mjs",
+    "assets/generation.mjs", "corpus.json", "index.html", "index.json", "results.json", "vectors.f32",
   ].sort());
   const html = await readFile(join(site, "index.html"), "utf8");
   assert.match(html, /data-runtime="browser"/);
   assert.doesNotMatch(html, /(?:href|src)="\//);
   const corpus = JSON.parse(await readFile(join(site, "corpus.json"), "utf8"));
-  assert.equal(corpus.documents.length, 6);
-  assert.equal(corpus.questions.length, 12);
+  assert.equal(corpus.documents.length, 5183);
+  assert.equal(corpus.questions.length, 6);
   assert.equal(corpus.cases, undefined);
 });

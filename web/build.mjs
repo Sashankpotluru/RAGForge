@@ -1,4 +1,4 @@
-import { validateCorpus, validateVectors } from "./vector-index.mjs";
+import { sha256, validateCorpus, validateVectors } from "./vector-index.mjs";
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -29,6 +29,15 @@ export async function buildSite(output = join(root, "dist/RAGForge")) {
     const summary = JSON.parse(await readFile(join(data, "summary.json"), "utf8"));
     if (corpus.documents.length !== 5183 || summary.documents !== manifest.rows || summary.queries !== 300 ||
       summary.runs.map(run => run.mode).join() !== "bm25,dense,hybrid,hybrid_rerank") throw Error("Incomplete SciFact release.");
+    const report = await readFile(join(root, "evaluations/results/scifact-v1.json"));
+    if (await sha256(report) !== summary.report_sha256) throw Error("Evaluation report checksum mismatch.");
+    const evidence = JSON.parse(report);
+    const measured = evidence.summary;
+    for (const key of ["corpus_sha256", "row_ids_sha256", "vector_sha256", "dataset_sha256"]) {
+      if (evidence.preparation.manifest[key] !== manifest[key]) throw Error("Index differs from the measured release: " + key);
+    }
+    if (JSON.stringify(summary.runs) !== JSON.stringify(measured.runs) || summary.queries !== measured.queries ||
+      measured.documents !== summary.documents) throw Error("Public summary does not match the evaluation report.");
     for (const name of ["corpus.json", "index.json", "vectors.f32"]) await copyFile(join(data, name), join(staging, name));
     await copyFile(join(data, "summary.json"), join(staging, "results.json"));
     await rm(output, { recursive: true, force: true });

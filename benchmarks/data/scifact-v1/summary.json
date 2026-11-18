@@ -1,0 +1,255 @@
+{
+  "dataset": "BEIR SciFact",
+  "documents": 5183,
+  "queries": 300,
+  "runs": [
+    {
+      "mode": "bm25",
+      "metrics": {
+        "hit_rate@1": {
+          "mean": 0.5433333333333333,
+          "ci95": [
+            0.4866666666666667,
+            0.6033333333333334
+          ]
+        },
+        "mrr@10": {
+          "mean": 0.6315859788359789,
+          "ci95": [
+            0.5829957671957672,
+            0.6822822420634918
+          ]
+        },
+        "ndcg@10": {
+          "mean": 0.6629229379573206,
+          "ci95": [
+            0.6179228467299706,
+            0.7105590652380905
+          ]
+        },
+        "recall@10": {
+          "mean": 0.7832777777777777,
+          "ci95": [
+            0.739111111111111,
+            0.8263375
+          ]
+        },
+        "recall@100": {
+          "mean": 0.8825555555555555,
+          "ci95": [
+            0.8466638888888889,
+            0.9177805555555555
+          ]
+        }
+      },
+      "timing_ms": {
+        "median": 1.0505839999968885,
+        "p95": 2.1527044999980727
+      },
+      "paired_ndcg_delta": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "examples": {
+        "largest_loss": null,
+        "largest_gain": null
+      }
+    },
+    {
+      "mode": "dense",
+      "metrics": {
+        "hit_rate@1": {
+          "mean": 0.5033333333333333,
+          "ci95": [
+            0.44666666666666666,
+            0.56
+          ]
+        },
+        "mrr@10": {
+          "mean": 0.6056044973544974,
+          "ci95": [
+            0.5586716931216931,
+            0.6552371031746029
+          ]
+        },
+        "ndcg@10": {
+          "mean": 0.6465151500873437,
+          "ci95": [
+            0.6018383335419373,
+            0.6933865486300004
+          ]
+        },
+        "recall@10": {
+          "mean": 0.7866666666666666,
+          "ci95": [
+            0.742,
+            0.8323333333333333
+          ]
+        },
+        "recall@100": {
+          "mean": 0.925,
+          "ci95": [
+            0.895,
+            0.9533333333333334
+          ]
+        }
+      },
+      "timing_ms": {
+        "median": 6.129729000000225,
+        "p95": 7.416662500000166
+      },
+      "paired_ndcg_delta": {
+        "mean": -0.016407787869976605,
+        "ci95": [
+          -0.05429777513897466,
+          0.021243822610155585
+        ]
+      },
+      "examples": {
+        "largest_loss": {
+          "id": "70",
+          "query": "Activation of PPM1D suppresses p53 function.",
+          "delta": -1
+        },
+        "largest_gain": {
+          "id": "514",
+          "query": "High dietary calcium intakes are unnecessary for prevention of secondary hyperparathyroidism in subjects with 25(OH)D levels above 75 nmol/liter.",
+          "delta": 1
+        }
+      }
+    },
+    {
+      "mode": "hybrid",
+      "metrics": {
+        "hit_rate@1": {
+          "mean": 0.54,
+          "ci95": [
+            0.4866666666666667,
+            0.5966666666666667
+          ]
+        },
+        "mrr@10": {
+          "mean": 0.6448015873015872,
+          "ci95": [
+            0.600407275132275,
+            0.6922824735449735
+          ]
+        },
+        "ndcg@10": {
+          "mean": 0.6802385071010401,
+          "ci95": [
+            0.6388521549782441,
+            0.7242327655751587
+          ]
+        },
+        "recall@10": {
+          "mean": 0.8095555555555555,
+          "ci95": [
+            0.7678888888888888,
+            0.853348611111111
+          ]
+        },
+        "recall@100": {
+          "mean": 0.955,
+          "ci95": [
+            0.93,
+            0.9766666666666667
+          ]
+        }
+      },
+      "timing_ms": {
+        "median": 6.8286875000012515,
+        "p95": 8.698574699988239
+      },
+      "paired_ndcg_delta": {
+        "mean": 0.01731556914371983,
+        "ci95": [
+          -0.0055447126498337565,
+          0.03983130038478855
+        ]
+      },
+      "examples": {
+        "largest_loss": {
+          "id": "660",
+          "query": "Ivermectin is used to treat onchocerciasis.",
+          "delta": -0.6666666666666667
+        },
+        "largest_gain": {
+          "id": "72",
+          "query": "Activator-inhibitor pairs are provided dorsally by Admpchordin.",
+          "delta": 0.6989700043360187
+        }
+      }
+    },
+    {
+      "mode": "hybrid_rerank",
+      "metrics": {
+        "hit_rate@1": {
+          "mean": 0.5633333333333334,
+          "ci95": [
+            0.5066666666666667,
+            0.62
+          ]
+        },
+        "mrr@10": {
+          "mean": 0.6491878306878305,
+          "ci95": [
+            0.6016636904761902,
+            0.6974213293650793
+          ]
+        },
+        "ndcg@10": {
+          "mean": 0.680651107123795,
+          "ci95": [
+            0.636815408638508,
+            0.7257829678526734
+          ]
+        },
+        "recall@10": {
+          "mean": 0.8062222222222222,
+          "ci95": [
+            0.764,
+            0.8488916666666667
+          ]
+        },
+        "recall@100": {
+          "mean": 0.955,
+          "ci95": [
+            0.93,
+            0.9766666666666667
+          ]
+        }
+      },
+      "timing_ms": {
+        "median": 447.84283350000624,
+        "p95": 461.8328673
+      },
+      "paired_ndcg_delta": {
+        "mean": 0.01772816916647426,
+        "ci95": [
+          -0.01800324884678458,
+          0.052515999629555866
+        ]
+      },
+      "examples": {
+        "largest_loss": {
+          "id": "70",
+          "query": "Activation of PPM1D suppresses p53 function.",
+          "delta": -1
+        },
+        "largest_gain": {
+          "id": "575",
+          "query": "In domesticated populations of Saccharomyces cerevisiae, whole chromosome aneuploidy is very uncommon.",
+          "delta": 1
+        }
+      }
+    }
+  ],
+  "run_at": "2026-11-18T20:30:10.170Z",
+  "hardware": "Apple M4 Pro",
+  "node": "v22.23.1",
+  "report_sha256": "5b5269f50394fad021b1e1d21cc5b6a55cf004570eb8fe5597246796852487fb"
+}

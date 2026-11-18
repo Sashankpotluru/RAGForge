@@ -1,74 +1,92 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bm25, fuse, rankScores, search, cite, validateQuery, validateAnswer } from "../retrieval.mjs";
+import { createIndex, dotScores, hitsFor, rank, validateQuery } from "../retrieval.mjs";
+import { cite, packContext, validateAnswer } from "../generation.mjs";
 
 const docs = [
-  { title: "Backups", source: "b", content: "Backups run every six hours." },
-  { title: "Access", source: "a", content: "Credentials expire every four hours." },
-  { title: "Audit", source: "c", content: "Audit events are recorded daily." },
+  { id: "1", title: "Backups", source: "b", content: "Backups run every six hours." },
+  { id: "9", title: "Access", source: "a", content: "Credentials expire every four hours." },
+  { id: "4", title: "Audit", source: "c", content: "Audit events are recorded daily." },
 ];
-
-test("BM25 ranks the rare matching term first and omits zero-overlap passages", () => {
-  assert.deepEqual(bm25(docs, "When do credentials expire?"), [1]);
-  assert.deepEqual(bm25(docs, "galaxies"), []);
-  assert.equal(bm25(docs, "backups hours")[0], 0);
+const index = createIndex(docs);
+test("BM25 indexes postings once and omits documents with no query terms", async () => {
+  const keyword = async query => (await rank(index, query, "bm25")).map(hit => hit.row);
+  assert.deepEqual(await keyword("When do credentials expire?"), [1]);
+  assert.deepEqual(await keyword("galaxies"), []);
+  assert.equal((await keyword("backups hours"))[0], 0);
 });
 
-test("RRF credits each source once per ranking and breaks ties consistently", () => {
-  assert.deepEqual(fuse([2, 2, 0], [0, 2]), [0, 2]);
-  assert.deepEqual(fuse([1, 2], [2, 0]), [2, 1, 0]);
-  assert.deepEqual(rankScores([0.7, -1, 0.7]), [0, 2, 1]);
+test("dot products use every row and return ties in stable corpus order", async () => {
+  const v = new Float32Array(3 * 384);
+  v[0] = v[768] = 1;
+  v[385] = 1;
+  const query = new Float32Array(384);
+  query[0] = 1;
+  assert.deepEqual(Array.from(dotScores(v, query)), [1, 0, 1]);
+  const dense = await rank(index, "backups", "dense", { dense: () => dotScores(v, query) });
+  assert.deepEqual(dense.map(hit => hit.row), [0, 2, 1]);
+  assert.throws(() => dotScores(v, new Float32Array(10)));
 });
 
-test("question boundaries use trimmed Unicode characters", () => {
-  assert.equal(validateQuery("  backups? "), "backups?");
+test("RRF top-100 and reranked top-50 preserve the original tail; browser displays ten", async () => {
+  const documents = Array.from({ length: 125 }, (_, i) => ({ ...docs[0], id: String(i) }));
+  const large = createIndex(documents);
+  const models = { dense: () => documents.map((_, i) => i),
+    rerank: async (_q, candidates) => {
+      assert.equal(candidates.length, 50);
+      return candidates.map((_, i) => i);
+    } };
+  const fused = await rank(large, "backups", "hybrid", models);
+  const reranked = await rank(large, "backups", "hybrid_rerank", models);
+  assert.equal(fused.length, 100);
+  assert.deepEqual(reranked.map(r => r.row), [...fused.slice(0, 50).reverse(), ...fused.slice(50)].map(r => r.row));
+  assert.equal(new Set(reranked.map(r => r.row)).size, 100);
+  assert.deepEqual(reranked.slice(50).map(r => r.score), fused.slice(50).map(r => r.score));
+  assert.equal(hitsFor(documents, reranked).length, 10);
+  assert.equal(hitsFor(documents, reranked)[0].document_id, documents[reranked[0].row].id);
+  const small = await rank(index, "backups", "hybrid", { dense: () => [0, 9, 4] });
+  assert.deepEqual(small.map(r => r.row), [0, 1, 2]);
+  assert.equal(small[0].score, 1 / 61 + 1 / 63);
+});
+
+test("question boundaries count trimmed Unicode characters", () => {
+  assert.equal(validateQuery(" backups? "), "backups?");
   assert.equal(validateQuery("🌿".repeat(500)).length, 1000);
   for (const value of ["   ", "a".repeat(501)]) assert.throws(() => validateQuery(value));
 });
 
-test("a citation needs whole words in exactly one source and rejects invented markers", () => {
+test("citation requires an entire phrase in exactly one supplied excerpt", () => {
   const hits = [{ citation_id: "C1", quote: docs[0].content }, { citation_id: "C2", quote: docs[1].content }];
   assert.equal(cite("Six hours.", hits), "Six hours. [C1]");
-  for (const text of ["every", "every si", "never expires", "six hours [C9]"]) {
-    assert.throws(() => cite(text, hits));
+  for (const text of ["every", "every si", "never expires", "six hours [C9]", "unknown"]) {
+    assert.ok(validateAnswer(text, hits).generation_error);
   }
   assert.throws(() => cite("six hours", [...hits, { citation_id: "C3", quote: "Wait six hours." }]));
 });
 
-test("lexical runs independently, dense and reranking honor their model scores", async () => {
-  const lexical = await search(docs, "backups", "bm25");
-  assert.deepEqual(lexical.map(hit => hit.source), ["b"]);
-  const neural = {
-    dense: async () => [0.1, 0.9, 0.2],
-    rerank: async (_q, candidates) => candidates.map(d => d.source === "c" ? 8 : -8),
-  };
-  const dense = await search(docs, "backups", "dense", neural);
-  assert.equal(dense[0].source, "a");
-  const reranked = await search(docs, "backups", "hybrid_rerank", neural);
-  assert.deepEqual([reranked[0].source, reranked[0].citation_id], ["c", "C1"]);
-});
-
-test("generation accepts only evidence in the model's context and preserves abstention", () => {
-  const hits = [
-    { citation_id: "C1", quote: "Database backups run every six hours." },
-    { citation_id: "C2", quote: "Temporary credentials expire after four hours." },
-  ];
-  assert.deepEqual(validateAnswer("every six hours", hits, 1), { answer: "every six hours [C1]" });
-  for (const text of ["after four hours", "once a week", "unanswerable"]) {
-    assert.ok(validateAnswer(text, hits, 1).generation_error);
+test("generation validates only the displayed word-boundary substrings sent to the model", () => {
+  const hits = Array.from({ length: 5 }, (_, i) => ({ citation_id: "C" + (i + 1),
+    quote: ["First source", "Next source", "Third source", "Fourth source", "Hidden source"][i]
+      + " token".repeat(60) + " omitted ending" }));
+  const encode = text => text.split(/\s+/);
+  const { prompt, excerpts } = packContext("What appears?", hits, encode, 65);
+  assert.ok(encode(prompt).length <= 65);
+  assert.equal(excerpts.length, 4);
+  for (const [i, excerpt] of excerpts.entries()) {
+    assert.ok(hits[i].quote.startsWith(excerpt.quote));
+    assert.ok(prompt.includes(excerpt.quote));
+    assert.ok(!excerpt.quote.includes("ending"));
   }
-  const duplicate = [...hits, { citation_id: "C3", quote: "Make copies every six hours." }];
-  assert.ok(validateAnswer("every six hours", duplicate, 1).generation_error);
+  assert.equal(cite("First source", excerpts), "First source [C1]");
+  assert.throws(() => cite("omitted ending", excerpts));
+  assert.throws(() => cite("Hidden source", excerpts));
+  assert.throws(() => packContext("long ".repeat(100), hits, encode, 25));
 });
 
-test("failed models or malformed model results never fall back to another mode", async () => {
+test("failures in the requested model propagate without changing mode", async () => {
   const offline = async () => { throw Error("offline"); };
-  await assert.rejects(search(docs, "backups", "hybrid", { dense: offline }), /offline/);
-  await assert.rejects(search(docs, "backups", "hybrid_rerank", {
-    dense: async () => [0, 1, 2], rerank: offline,
-  }), /offline/);
-  for (const scores of [[0.9], [1, NaN, 0]]) {
-    await assert.rejects(search(docs, "backups", "dense", { dense: async () => scores }));
-  }
-  await assert.rejects(search(docs, "backups", "unknown"));
+  await assert.rejects(rank(index, "backups", "hybrid", { dense: offline }), /offline/);
+  await assert.rejects(rank(index, "backups", "hybrid_rerank", { dense: () => [0, 1, 2], rerank: offline }), /offline/);
+  for (const scores of [[0.9], [1, NaN, 0]]) await assert.rejects(rank(index, "backups", "dense", { dense: () => scores }));
+  await assert.rejects(rank(index, "backups", "unknown"));
 });
