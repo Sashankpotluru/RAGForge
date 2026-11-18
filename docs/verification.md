@@ -41,6 +41,22 @@ The current static artifact contains only the compact load summary. Desktop and
 intact and that wide tables scroll within their panels without widening the page.
 The existing non-failing PyMuPDF mypy override note remains.
 
+[CI run 44406333550](https://github.com/Sashankpotluru/RAGForge/actions/runs/44406333550)
+passed for release commit `c44d021`: 21 Node tests, 75 Python tests with two opt-in
+skips, and all three live Docker Compose/Qdrant integration tests. The Python run
+retained the upstream Starlette deprecation warning noted below.
+[Pages deployment 44406333738](https://github.com/Sashankpotluru/RAGForge/actions/runs/44406333738)
+also passed. Twelve deployed files, including the corpus, vectors, both retrieval
+summaries, capacity summary, changed browser code and architecture image, returned
+HTTP 200 and matched the current build byte for byte.
+
+The public browser completed real hybrid reranking for “CRISPR genome editing”
+and displayed ten cited passages. Its Results view switched between SciFact and
+ArguAna while retaining the independent capacity table, and all three raw-report
+links pointed to the matching release commit. The Architecture view displayed
+the updated diagram. Local previews and benchmark services were stopped; the
+public demo remains served by GitHub Pages.
+
 [SciFact methods and results](scifact-evaluation.md) ·
 [ArguAna methods and results](arguana-evaluation.md) ·
 [API load protocol](load-testing.md)
