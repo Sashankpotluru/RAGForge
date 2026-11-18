@@ -23,13 +23,13 @@
     <main id="main" tabindex="-1">
       <section id="workbench">
         <h1>Evidence workbench</h1>
-        <p class="intro">Search six sample policies and read the passages behind each answer.</p>
+        <p class="intro">Search the corpus and inspect the retrieved passages.</p>
         <form id="query" class="sheet">
           <div class="question-label">
-            <label for="question">Your question</label>
-            <details id="examples"><summary>Sample questions</summary><div id="samples"></div></details>
+            <label id="query-label" for="question">Search query</label>
+            <details id="examples"><summary id="example-label">Examples</summary><div id="samples"></div></details>
           </div>
-          <textarea id="question" rows="2" required>How often do database backups run?</textarea>
+          <textarea id="question" rows="2" required></textarea>
           <div class="controls">
             <div class="mode-field"><label for="mode">Retrieval mode</label><select id="mode" disabled aria-describedby="model"></select></div>
             <div class="actions"><button id="search" class="primary" disabled>Find evidence</button><button id="cancel" type="button" hidden>Cancel</button></div>
@@ -41,31 +41,37 @@
         </form>
         <article class="evidence" aria-labelledby="passage-heading">
           <h2 id="passage-heading">Source passages</h2>
-          <p role="status" id="status">Loading sample policies…</p>
+          <p role="status" id="status">Loading the corpus…</p>
           <div id="generated"></div>
           <div id="hits"></div>
         </article>
       </section>
       <section id="corpus" hidden>
-        <h1>Sample corpus</h1>
-        <p class="intro">Six original, synthetic policies. Open a document to read its full text.</p>
+        <h1>Document corpus</h1>
+        <p class="intro">Open a document to read its text.</p>
+        <div id="attribution" class="note"></div>
+        <div class="corpus-tools"><label for="filter">Filter documents</label>
+          <input id="filter" type="search" placeholder="Title, text or ID">
+        </div>
         <div id="docs" class="sheet"></div>
+        <div class="pager"><button id="previous" type="button">Previous</button>
+          <span id="page-count" role="status"></span><button id="next" type="button">Next</button></div>
       </section>
       <section id="results" hidden>
         <h1>Retrieval results</h1>
-        <p class="intro">Recorded Python backend measurements for twelve questions across six synthetic policies.</p>
-        <div id="metrics" class="sheet"></div>
-        <p class="note">Hit rate measures how often the first result contains relevant evidence. Mean reciprocal rank (MRR) gives more credit when relevant evidence appears earlier in the first ten results.</p>
+        <p class="intro">Retrieval quality and measured latency.</p>
+        <div id="metrics" class="sheet" tabindex="0" role="region" aria-label="Retrieval metrics"></div>
+        <p id="metric-guide" class="note">Hit rate measures how often the first result contains relevant evidence. Mean reciprocal rank (MRR) gives more credit when relevant evidence appears earlier in the first ten results.</p>
       </section>
       <section id="architecture" hidden>
         <h1>Architecture</h1>
         <p class="intro">In the GitHub Pages edition, GitHub Actions publishes the website and the visitor's browser runs retrieval and optional models. The local edition uses the separate Python backend.</p>
         <figure class="sheet">
-          <a href="./assets/architecture-pages.png" aria-label="Open the full-size architecture diagram"><img src="./assets/architecture-pages.png" alt="RAGForge architecture: GitHub Actions deploys static files to GitHub Pages, the visitor's browser runs retrieval and optional Flan-T5 generation, and the Python backend runs separately" loading="lazy"></a>
-          <figcaption>Static hosting, browser retrieval, optional models, and the separate Python backend. Select the diagram to inspect it at full size.</figcaption>
+          <a href="./assets/architecture-scifact.png" aria-label="Open the full-size architecture diagram"><img src="./assets/architecture-scifact.png" alt="RAGForge architecture: GitHub Actions deploys static files to GitHub Pages, the visitor's browser runs retrieval and optional Flan-T5 generation, and the Python backend runs separately" loading="lazy"></a>
+          <figcaption>SciFact preparation, browser search, benchmark evaluation and the local Python service. Select the diagram to inspect it at full size.</figcaption>
         </figure>
       </section>
-      <noscript>This workbench requires JavaScript to search its sample corpus.</noscript>
+      <noscript>Enable JavaScript to search this corpus.</noscript>
     </main>
   </body>
 </html>

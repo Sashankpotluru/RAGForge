@@ -80,6 +80,14 @@ export async function readDataset() {
     id: row._id, title: row.title, content: row.text, source: "SciFact " + row._id,
   }));
   const exampleIds = [...train.keys()].sort((a, b) => Number(a) - Number(b)).slice(0, 6);
-  const corpus = { name: "SciFact", documents, questions: exampleIds.map(id => queries.get(id).text), exampleIds };
+  const attribution = {
+    authors: "David Wadden, Shanchuan Lin, Kyle Lo, Lucy Lu Wang, Madeleine van Zuylen, Arman Cohan, Hannaneh Hajishirzi",
+    paper: "https://aclanthology.org/2020.emnlp-main.609/",
+    source: "https://github.com/allenai/scifact", distribution: dataset.url,
+    terms: "https://github.com/allenai/scifact/blob/master/LICENSE.md",
+    claims_and_evidence: "CC BY 4.0", abstracts: "ODC-By 1.0",
+    adaptation: "BEIR title/abstract records retain original IDs and text. RAGForge reformats fields, selects six train claims, and computes document embeddings.",
+  };
+  const corpus = { name: "SciFact", attribution, documents, questions: exampleIds.map(id => queries.get(id).text), exampleIds };
   return { corpus, queries, train, test };
 }
