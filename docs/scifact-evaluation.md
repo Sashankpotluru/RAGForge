@@ -122,9 +122,11 @@ node --test web/test/*.test.mjs
 node web/build.mjs
 ```
 
-Preparation downloads and verifies the official archive and pinned neural
-artifacts, then writes the corpus, index manifest and binary vectors. Evaluation
-writes the full report and the browser summary. It fails on missing queries,
+Preparation checks the archive and extracted dataset files against their pinned
+checksums. It loads the embedding model by immutable revision, then writes the
+corpus, index manifest and binary vectors. Evaluation records SHA-256 hashes of
+the embedding and reranking ONNX weight files in the full report and writes the
+browser summary. It fails on missing queries,
 invalid metrics, changed dataset bytes or misaligned vectors. Rerunning replaces
 these generated artifacts; use a clean checkout to keep provenance interpretable.
 

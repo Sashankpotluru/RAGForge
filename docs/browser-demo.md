@@ -13,6 +13,8 @@
 
 Changing the menu selects a mode. Starting a search in that mode loads its models. Neural modes also load a shared JavaScript and WebAssembly runtime of about 23 MB before compression and a 7,961,088-byte document-vector file. Only the query needs embedding at search time. The document vectors are prepared from the same pinned q8 model and 256-token input limit. The worker validates corpus, vector and row-order hashes before neural search.
 
+The interface loads and decodes the corpus for browsing. On the first search, the worker also loads and decodes it for ranking. Keeping both copies in memory increases startup work and memory use.
+
 The worker keeps ranking work off the interface thread. BM25 needs the corpus but no neural runtime or vectors. Hybrid fuses the first 100 candidates from each retriever; reranking scores the first 50 fused candidates. The UI shows the first ten. **Cancel** terminates the worker. The next request starts a fresh worker and can reuse cached downloads.
 
 ## Cited answers
