@@ -1,11 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { datasets, paths, root } from "../../benchmarks/dataset.mjs";
 import { validateLoad } from "../validate-load.mjs";
-import { buildSite, validateRelease } from "../build.mjs";
+import { buildSite, reportRevision, validateRelease } from "../build.mjs";
 
 test("a clean Pages artifact contains only its public allowlist, including after rebuild", async t => {
   const temp = await mkdtemp(join(tmpdir(), "ragforge-pages-"));
@@ -34,8 +36,31 @@ test("a clean Pages artifact contains only its public allowlist, including after
     assert.equal(summary.runs.length, 4);
     assert.ok(summary.runs.every(row => !("examples" in row) && !("ranked" in row)));
   }
+  for (const [key, run] of [["scifact", "scifact-v2"], ["arguana", "arguana-v1"], ["load", "backend-load-v1"]]) {
+    const path = "evaluations/results/" + run + ".json";
+    const revision = reportRevision(path, await readFile(join(root, path)));
+    assert.ok(html.includes('data-' + key + '-revision="' + revision + '"'));
+  }
   assert.match(html, /<select id="benchmark-dataset"/);
   assert.match(html, /id="backend-capacity" hidden/);
+});
+
+test("report links require the exact report bytes at the recorded Git revision", async t => {
+  const cwd = await mkdtemp(join(tmpdir(), "ragforge-revision-"));
+  t.after(() => rm(cwd, { recursive: true, force: true }));
+  const path = "report.json";
+  const bytes = Buffer.from('{"run": 1}');
+  await writeFile(join(cwd, path), bytes);
+  assert.equal(reportRevision(path, bytes, cwd), "");
+  const git = (...args) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
+  git("init", "-q");
+  git("add", path);
+  git("-c", "user.name=Test", "-c", "user.email=test@example.invalid", "-c", "commit.gpgsign=false",
+    "commit", "-qm", "Record report");
+  assert.equal(reportRevision(path, bytes, cwd), git("rev-parse", "HEAD"));
+  const rerun = Buffer.from('{"run": 2}');
+  await writeFile(join(cwd, path), rerun);
+  assert.equal(reportRevision(path, rerun, cwd), "");
 });
 
 test("release binding rejects a mismatched summary, manifest, report or audit", async () => {
@@ -60,7 +85,6 @@ test("release binding rejects a mismatched summary, manifest, report or audit", 
 test("load release rejects raw timing, count, failure or aggregate drift", async () => {
   const bytes = await readFile(join(root, "evaluations/results/backend-load-v1.json"));
   const summary = JSON.parse(await readFile(join(root, "benchmarks/data/backend-load-v1/summary.json")));
-  const { createHash } = await import("node:crypto");
   for (const change of [
     report => { report.model.revision = "unexpected"; },
     report => { report.workload.document_ids.reverse(); },
@@ -77,4 +101,15 @@ test("load release rejects raw timing, count, failure or aggregate drift", async
   }
   await assert.rejects(validateLoad(bytes, { ...summary, private_rows: [] }), /aggregate mismatch/);
   await assert.rejects(validateLoad(bytes, { ...summary, report_sha256: "0".repeat(64) }), /digest/);
+});
+
+test("a closed-loop worker cannot schedule its next request before its previous finish", async () => {
+  const report = JSON.parse(await readFile(join(root, "evaluations/results/backend-load-v1.json")));
+  const summary = JSON.parse(await readFile(join(root, "benchmarks/data/backend-load-v1/summary.json")));
+  const trial = report.trials.find(trial => trial.clients === 4);
+  const requests = trial.requests.filter(row => row.worker === 2);
+  requests[1].scheduled_ns = requests[0].finish_ns - 1;
+  const bytes = Buffer.from(JSON.stringify(report));
+  const report_sha256 = createHash("sha256").update(bytes).digest("hex");
+  await assert.rejects(validateLoad(bytes, { ...summary, report_sha256 }), /overlapping requests on one worker/);
 });

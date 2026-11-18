@@ -46,6 +46,18 @@ export async function validateRelease(dataset, manifest, reportBytes, summary, a
   if (JSON.stringify(summary) !== JSON.stringify(expected)) throw Error("Public summary differs from measured report.");
 }
 
+// A local rerun or source archive may have no matching report at HEAD.
+export function reportRevision(reportPath, bytes, cwd = root) {
+  try {
+    const options = { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] };
+    const head = execFileSync("git", ["rev-parse", "HEAD"], options).trim();
+    const committed = execFileSync("git", ["rev-parse", head + ":" + reportPath], options).trim();
+    const blob = createHash("sha1").update("blob " + bytes.length + "\0").update(bytes).digest("hex");
+    if (blob === committed) return head;
+  } catch { /* A source archive can be built without Git metadata. */ }
+  return "";
+}
+
 export async function buildSite(output = join(root, "dist/RAGForge")) {
   await mkdir(dirname(output), { recursive: true });
   const staging = await mkdtemp(join(dirname(output), ".pages-"));
@@ -67,32 +79,25 @@ export async function buildSite(output = join(root, "dist/RAGForge")) {
     await validateVectors(vectors, manifest);
     if (corpus.documents.length !== datasets.scifact.documents) throw Error("Incomplete SciFact corpus.");
     for (const name of ["corpus.json", "index.json", "vectors.f32"]) await copyFile(join(data, name), join(staging, name));
+    const revisions = [];
     for (const dataset of Object.values(datasets)) {
       const { indexDir, runDir } = paths(dataset);
-      const results = join(root, "evaluations/results");
-      const summaryFile = join(runDir, "summary.json");
-      const summary = JSON.parse(await readFile(summaryFile));
+      const reportPath = "evaluations/results/" + dataset.run + ".json";
+      const report = await readFile(join(root, reportPath));
+      const audit = await readFile(join(root, "evaluations/results", dataset.run + "-metric-audit.json"));
+      const summary = await readFile(join(runDir, "summary.json"));
       await validateRelease(dataset, JSON.parse(await readFile(join(indexDir, "index.json"))),
-        await readFile(join(results, dataset.run + ".json")), summary,
-        JSON.parse(await readFile(join(results, dataset.run + "-metric-audit.json"))));
+        report, JSON.parse(summary), JSON.parse(audit));
+      revisions.push('data-' + dataset.key + '-revision="' + reportRevision(reportPath, report) + '"');
       const publicName = dataset.key === "scifact" ? "results.json" : dataset.key + "-results.json";
-      await copyFile(summaryFile, join(staging, publicName));
+      await writeFile(join(staging, publicName), summary);
     }
     const capacity = await readFile(join(root, "benchmarks/data/backend-load-v1/summary.json"));
     const reportPath = "evaluations/results/backend-load-v1.json";
     const report = await readFile(join(root, reportPath));
     await validateLoad(report, JSON.parse(capacity));
-    // Link only when the immutable Git revision actually contains these report bytes.
-    // An unpublished local rerun can still display its completed measurements.
-    let revision = "";
-    try {
-      const options = { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] };
-      const head = execFileSync("git", ["rev-parse", "HEAD"], options).trim();
-      const committed = execFileSync("git", ["rev-parse", head + ":" + reportPath], options).trim();
-      const blob = createHash("sha1").update("blob " + report.length + "\0").update(report).digest("hex");
-      if (blob === committed) revision = head;
-    } catch { /* A source archive can be built without Git metadata. */ }
-    const runtime = 'data-runtime="browser" data-load-revision="' + revision + '"';
+    revisions.push('data-load-revision="' + reportRevision(reportPath, report) + '"');
+    const runtime = ['data-runtime="browser"', ...revisions].join(" ");
     await writeFile(join(staging, "index.html"), html.replace('data-runtime="server"', runtime));
     await writeFile(join(staging, "backend-load.json"), capacity);
     await rm(output, { recursive: true, force: true });

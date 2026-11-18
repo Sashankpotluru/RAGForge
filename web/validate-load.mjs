@@ -52,6 +52,7 @@ export async function validateLoad(reportBytes, summary) {
       trial.elapsed_s >= 30 && trial.requests.length >= trial.clients, "incomplete trial");
     const counts = {}, statuses = {};
     const workers = Array(trial.clients).fill(0);
+    const lastFinish = Array(trial.clients).fill(0);
     for (const row of trial.requests) {
       requireValue(Number.isInteger(row.worker) && row.worker >= 0 && row.worker < trial.clients &&
         row.sequence === workers[row.worker]++ && queryIds.has(row.query_id), "request sequence");
@@ -61,6 +62,8 @@ export async function validateLoad(reportBytes, summary) {
         row.scheduled_ns >= 0 && row.scheduled_ns < 30e9 && row.start_ns >= row.scheduled_ns &&
         row.finish_ns >= row.start_ns && row.finish_ns / 1e9 <= trial.elapsed_s &&
         row.latency_ms === (row.finish_ns - row.start_ns) / 1e6, "request interval");
+      requireValue(row.scheduled_ns >= lastFinish[row.worker], "overlapping requests on one worker");
+      lastFinish[row.worker] = row.finish_ns;
       const status = row.status ?? "no_response";
       statuses[status] = (statuses[status] ?? 0) + 1;
       if (row.failure === null) {

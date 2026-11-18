@@ -4,13 +4,18 @@ import { validateQuery } from "./retrieval.mjs";
 import { WorkerClient } from "./worker-client.mjs";
 
 const client = new WorkerClient(() => new Worker(new URL("./inference.mjs", import.meta.url), { type: "module" }));
+function readSummary(name) {
+  return fetchAsset(name).then(response => response.json());
+}
+
 export async function load() {
   if (typeof Worker !== "function") throw Error("Enable browser workers to search the corpus.");
-  const [{ corpus }, capacity, ...results] = await Promise.all([loadCorpus(),
-    fetchAsset("backend-load.json").then(r => r.json()),
-    ...["results.json", "arguana-results.json"].map(name => fetchAsset(name).then(r => r.json()))]);
+  const [{ corpus }, results] = await Promise.all([loadCorpus(), readSummary("results.json")]);
   const neural = typeof WebAssembly === "object";
-  return { corpus, results, capacity, caps: {
+  // The workbench can start searching while these independent Results panels load.
+  const arguana = readSummary("arguana-results.json").catch(() => null);
+  const capacity = readSummary("backend-load.json").catch(() => null);
+  return { corpus, results, arguana, capacity, caps: {
     modes: neural ? protocol.modes : ["bm25"], defaultMode: "bm25", generation: neural ? "Flan-T5 Base" : null,
   } };
 }

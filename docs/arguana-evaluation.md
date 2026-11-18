@@ -138,10 +138,11 @@ npm run evaluate --prefix benchmarks -- arguana
 node benchmarks/verify_arguana_tokens.mjs
 ```
 
-With `pytrec-eval-terrier==0.5.11` installed in a separate Python environment:
+Before testing or building the site, save the audit of the new report using
+`pytrec-eval-terrier==0.5.11` in a separate Python environment:
 
 ```sh
-python benchmarks/verify_metrics.py --report evaluations/results/arguana-v1.json --qrels data/arguana/qrels/test.tsv
+python benchmarks/verify_metrics.py --report evaluations/results/arguana-v1.json --qrels data/arguana/qrels/test.tsv --output evaluations/results/arguana-v1-metric-audit.json
 ```
 
 The corpus and binary vectors remain in the ignored local cache. Evaluation

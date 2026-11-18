@@ -132,8 +132,6 @@ root:
 npm ci --prefix benchmarks
 npm run prepare:data --prefix benchmarks -- scifact
 npm run evaluate --prefix benchmarks -- scifact
-node --test web/test/*.test.mjs
-node web/build.mjs
 ```
 
 Preparation checks the archive and extracted dataset files against their pinned
@@ -144,12 +142,15 @@ browser summary. It fails on missing queries,
 invalid metrics, changed dataset bytes or misaligned vectors. Rerunning replaces
 these generated artifacts; use a clean checkout to keep provenance interpretable.
 
-To independently audit the resulting metrics without rerunning models:
+After evaluation, save an independent audit of the new report before testing and
+building the site. These commands also work with an existing report:
 
 ```sh
 python3 -m venv /tmp/ragforge-metric-audit
 /tmp/ragforge-metric-audit/bin/pip install pytrec-eval-terrier==0.5.11
-/tmp/ragforge-metric-audit/bin/python benchmarks/verify_metrics.py --report evaluations/results/scifact-v2.json --qrels data/scifact/qrels/test.tsv
+/tmp/ragforge-metric-audit/bin/python benchmarks/verify_metrics.py --report evaluations/results/scifact-v2.json --qrels data/scifact/qrels/test.tsv --output evaluations/results/scifact-v2-metric-audit.json
+node --test web/test/*.test.mjs
+node web/build.mjs
 ```
 
 In the recorded run, document embedding took about 54 seconds, loading and

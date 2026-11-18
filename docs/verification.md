@@ -33,7 +33,7 @@ the issuance cutoff, drain-aware throughput and every pooled percentile. Both
 child services exited and temporary index storage was removed afterward.
 
 Final local checks passed **75 Python tests** with two opt-in integration skips,
-**18 Node tests**, Ruff lint/format, mypy and the Pages build. The build independently
+**21 Node tests**, Ruff lint/format, mypy and the Pages build. The build independently
 recalculates the load summaries from raw observations and rejects altered counts,
 durations, failures, percentiles, model revision, document order or aggregate keys.
 The current static artifact contains only the compact load summary. Desktop and

@@ -209,6 +209,12 @@ function link(text, href) {
   anchor.href = href;
   return anchor;
 }
+function reportSource(label, run, revision) {
+  const path = "evaluations/results/" + run + ".json";
+  return revision
+    ? link(label, "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/" + revision + "/" + path)
+    : element("code", path);
+}
 function renderBenchmark(results) {
   byId("metrics").replaceChildren();
   const arguana = results.run === "arguana-v1";
@@ -254,7 +260,8 @@ function renderBenchmark(results) {
     + " paired nDCG intervals relative to BM25 include zero.", "note");
   const data = element("p", undefined, "note");
   const repository = "https://github.com/Sashankpotluru/RAGForge/blob/main/";
-  data.append(link("Full per-query results", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/main/evaluations/results/" + results.run + ".json"),
+  const revision = document.documentElement.dataset[arguana ? "arguanaRevision" : "scifactRevision"];
+  data.append(reportSource("Full per-query results", results.run, revision),
     " · ", link("Methodology and paired comparisons", repository + "docs/" + (arguana ? "arguana" : "scifact") + "-evaluation.md"));
   byId("metrics").append(table, pairedNote, comparisons,
     element("p", "Both datasets use up to 100 candidates per retriever, reciprocal rank fusion with k = 60, "
@@ -267,6 +274,12 @@ function renderBenchmark(results) {
 }
 function renderCapacity(report) {
   const section = byId("backend-capacity");
+  section.hidden = false;
+  section.append(element("h2", "Python API load test"));
+  if (!report) {
+    section.append(element("p", "The backend load report is unavailable.", "note"));
+    return;
+  }
   const table = element("table");
   table.createCaption().textContent = "Three 30-second trials per client count, pooled";
   const head = table.createTHead().insertRow();
@@ -297,25 +310,34 @@ function renderCapacity(report) {
   panel.append(table);
   const sources = element("p", undefined, "note");
   const revision = document.documentElement.dataset.loadRevision;
-  if (revision) {
-    sources.append(link("Full trials and request observations", "https://raw.githubusercontent.com/Sashankpotluru/RAGForge/"
-      + revision + "/evaluations/results/backend-load-v1.json"), " · ");
-  }
-  sources.append(link("Load-test methodology", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/load-testing.md"));
-  section.append(element("h2", "Python API load test"), element("p", report.scope, "note"), panel,
+  sources.append(reportSource("Full trials and request observations", "backend-load-v1", revision), " · ",
+    link("Load-test methodology", "https://github.com/Sashankpotluru/RAGForge/blob/main/docs/load-testing.md"));
+  section.append(element("p", report.scope, "note"), panel,
     element("p", "Latency percentiles cover successful responses only, through JSON and citation validation. "
       + "Throughput includes time to finish in-flight requests. Clients send the next search as soon as the previous one finishes.", "note"),
     element("p", "The service searched 1,000 SciFact abstracts using CPU Tiny-BERT embeddings and BM25. "
       + "The browser uses MiniLM. During stalls these closed-loop clients send fewer requests, limiting what the measurements say about independently arriving traffic.", "note"), sources);
-  section.hidden = false;
 }
-function renderResults(results, corpus) {
+function renderResults(results, corpus, arguana) {
   if (browser) {
     const select = byId("benchmark-dataset");
-    for (const report of results) select.add(new Option(report.dataset, report.run));
-    byId("dataset-picker").hidden = false;
-    select.onchange = () => renderBenchmark(results[select.selectedIndex]);
-    renderBenchmark(results[0]);
+    select.add(new Option(results.dataset, results.run));
+    const option = new Option("BEIR ArguAna (loading…)", "arguana-v1");
+    option.disabled = true;
+    select.add(option);
+    const picker = byId("dataset-picker");
+    picker.hidden = false;
+    renderBenchmark(results);
+    arguana.then(report => {
+      if (!report) {
+        option.text = "BEIR ArguAna (unavailable)";
+        picker.append(element("p", "The ArguAna retrieval report is unavailable.", "note"));
+        return;
+      }
+      option.text = report.dataset;
+      option.disabled = false;
+      select.onchange = () => renderBenchmark(select.value === report.run ? report : results);
+    });
     return;
   }
   document.querySelector("#results .intro").textContent = "Recorded Python backend measurements for " + corpus.questions.length + " fixture questions across " + corpus.documents.length + " synthetic policies.";
@@ -348,8 +370,8 @@ async function start() {
   byId("mode").value = caps.defaultMode || "hybrid";
   describeMode();
   renderCorpus(data.corpus);
-  renderResults(data.results, data.corpus);
-  if (browser) renderCapacity(data.capacity);
+  renderResults(data.results, data.corpus, data.arguana);
+  if (browser) data.capacity.then(renderCapacity);
   canGenerate = Boolean(caps.generation);
   if (browser) {
     byId("gen-note").textContent = canGenerate
