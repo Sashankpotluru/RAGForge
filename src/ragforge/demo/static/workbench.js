@@ -123,9 +123,9 @@ async function run(answer) {
     renderEvidence(data);
     if (data.hits.length) {
       const count = data.hits.length + (data.hits.length === 1 ? " passage" : " passages");
-      setStatus(count + " for “" + query + "” in " + formatTime(data.search_ms) + (browser ? " on this device." : " on the server."));
+      setStatus(labels[mode] + " found " + count + " for “" + query + "” in " + formatTime(data.search_ms) + (browser ? " on this device." : " on the server."));
     } else {
-      setStatus("No passages matched “" + query + "”. Try a policy term such as backups or credentials.");
+      setStatus(labels[mode] + " found no passages for “" + query + "”. Try a policy term such as backups or credentials.");
     }
   } catch (error) {
     setStatus(error.name === "AbortError" ? error.message : "Search failed. " + error.message + " Retry when ready.");
