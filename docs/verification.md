@@ -102,6 +102,35 @@ unknown query fields 422, oversized bodies 413, and path traversal 404. The brow
 also completed generation and followed its citation to the matching passage.
 That deployment used a temporary tunnel to the read-only Python demo.
 
+## GitHub Pages browser edition
+
+The browser release adds nine Node tests for retrieval rankings, fusion,
+citation matching, worker cancellation and failures, and the static artifact's
+contents. All nine passed. The full Python suite still passed 73 tests with two
+opt-in service skips; formatting, lint, typing and fixture evaluation passed.
+
+The workbench was tested from a static server at the `/RAGForge/` project path.
+Real MiniLM embeddings and the MS MARCO cross-encoder both ranked the backup
+policy first for the backup-frequency question. Keyword search required no
+model download. The shared Python UI also completed dense and hybrid searches.
+
+Actual Flan-T5 Base inference in the browser produced these observations:
+
+| Question | Displayed answer |
+| --- | --- |
+| How often do database backups run? | every six hours [C1] |
+| How long are application logs retained? | seven days [C1] |
+| How long are database backups retained? | thirty days [C1] |
+| What color is the database server? | No cited answer; the model abstained |
+
+These are individual functional checks, not an accuracy benchmark. Each displayed
+answer matched exactly one supplied source passage. That match checks provenance;
+it does not prove that every generated answer is relevant to the question.
+
+Canceling generation restored the controls, and the next search succeeded.
+Desktop and 390px layouts showed no horizontal page overflow. Corpus, recorded
+results, citation navigation and the supplied architecture image were checked.
+
 ## Review and boundaries
 
 Independent review identified failure cases in initialization, deletion, cache

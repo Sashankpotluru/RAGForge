@@ -46,7 +46,8 @@ inspected. [Implementation decisions](docs/implementation-notes.md)
 
 ## Run the sample UI locally
 
-Run the browser demo locally with an empty dedicated storage directory. Its six synthetic documents are bundled with the application.
+Run the Python-backed workbench locally with an empty dedicated storage directory.
+Its six synthetic documents are bundled with the application.
 
 ```bash
 uv sync --locked
@@ -55,6 +56,7 @@ uv run --no-sync ragforge demo --data-dir data/public-demo --port 8787
 
 Open [the workbench](http://127.0.0.1:8787). The [local demo guide](docs/demo.md)
 covers neural retrieval and running Qwen on your own machine.
+To preview the GitHub Pages edition, follow the [static build instructions](docs/browser-demo.md#preview-a-project-site-build).
 
 ## Run the backend
 
